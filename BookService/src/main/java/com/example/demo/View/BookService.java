@@ -6,6 +6,7 @@ import com.example.demo.Model.Book.Book;
 import com.example.demo.Model.Book.BookRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,7 +20,19 @@ public class BookService {
         this.authorRepository = authorRepository;
     }
 
-    public Book getBooks(String isbn){
+
+    public List<Book> getBooks(){
+        Optional<List<Book>> booksOption = Optional.of(bookRepository.findAll());
+        if(!booksOption.isPresent()){
+            throw new IllegalStateException("There is no book !");
+        }
+        else{
+            return booksOption.get();
+        }
+    }
+
+
+    public Book getBooksByIsbn(String isbn){
         Optional<Book> bookOption = bookRepository.findById(isbn);
 //        Book bookOption = bookRepository.findById(ISBN).orElse(null);
 //        return bookOption;
@@ -35,12 +48,13 @@ public class BookService {
         //return Book.getBooks();
     }
 
-    public void addNewBook(Book book){
+    public Book addNewBook(Book book){
         Optional<Book> bookOptional = bookRepository.findById(book.getIsbn());
         if(bookOptional.isPresent()) {
             throw new IllegalStateException("Book already exists!");
         }
-        bookRepository.save(book);
+        return bookRepository.save(book);
+        //return book;
     }
 
     public Author getAuthor(Long ID){
