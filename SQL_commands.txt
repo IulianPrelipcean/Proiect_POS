@@ -2,9 +2,75 @@
 // ---------------------create 
 
  
- create table book(ISBN varchar(30) not null primary key, title varchar(30) not null, author varchar(30) not null, type varchar(20) not null, release_year int not null, number_of_pages int not null,price float not null, available_stock int not null);
+ create table book(ISBN varchar(30) not null primary key, title varchar(30) not null, publisher varchar(30) not null, type varchar(20) not null, release_year int not null, number_of_pages int not null,price float not null, available_stock int not null);
 
+ 
+ create table author(id int primary key not null, firstName varchar(30) not null, lastName varchar(30) not null);
+ 
+ create table book_author(id int primary key not null, ISBN varchar(30) not null, id_author int not null, index int not null);
+  create table book_author(id integer primary key not null, ISBN varchar(30) not null, id_author integer not null, index integer not null);
+ 
  
  // -------------- insert
  
- insert into book(id, name, author, type, release_year, number_of_pages, ISBN, available_stock) values(1, "andrew", "my_author", "dramatic", 1999, 2120, "ISBN-123-432", 20) ;
+ insert into book(ISBN, title, publisher, type, release_year, number_of_pages, available_stock, price) values("ISBN-123", "andrew", "my_publisher", "dramatic", 1999, 2120, 20, 20.20) ;
+
+ 
+ insert into author(id, first_name, last_name) values(1, "my_author_first", "my_author_last");
+ 
+ 
+ //-----------------
+ 
+ 
+ select user, host from mysql.user;
+
+ 
+ create user 'db_manager'@'localhost' identified by 'db_manager';
+ create user 'web_user'@'localhost' identified by 'web_user';
+ 
+ grant all on books.* to 'db_manager'@'localhost';          // this is made from root user
+ grant select, insert, drop, update on books.* to 'web_user'@'localhost';            // this is made from root user
+
+ 
+ 
+ 
+ 
+ 
+ Titi-Gabriel Guzu9:24 PM
+create table carte_autor(
+	isbn varchar(10) not null,
+	id_autor int(6) unsigned not null,
+	foreign key (isbn) references carte(isbn),
+	foreign key (id_autor) references autor(id),
+	unique (isbn, id_autor)
+);
+nu trebuie pus primarykey
+doar unique pe perechea aia
+
+
+Titi-Gabriel Guzu9:25 PM
+@NotNull
+    @ManyToMany(targetEntity = Author.class)
+    @JoinTable(
+            name = "carte_autor",
+            joinColumns = @JoinColumn(name = "isbn"),
+            inverseJoinColumns = @JoinColumn(name = "id_autor")
+    )
+    private List<Author> authors;
+se face automat
+de la adnotari
+
+
+@Override
+    public ResponseEntity<List<Author>> getBookAuthors(String isbn) {
+        Optional<Book> optBook = bookRepository.findById(isbn);
+        if(optBook.isPresent()){
+            return new ResponseEntity<>(optBook.get().getAuthors(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+@GetMapping("/{isbn}/authors")
+    public ResponseEntity<List<Author>> getBookAuthors(@PathVariable("isbn") String isbn){
+        return bookService.getBookAuthors(isbn);
+    }
+

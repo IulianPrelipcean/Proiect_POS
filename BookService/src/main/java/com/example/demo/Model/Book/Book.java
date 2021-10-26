@@ -1,4 +1,4 @@
-package com.example.demo.Beans;
+package com.example.demo.Model.Book;
 
 import javax.persistence.*;
 import java.util.List;
@@ -8,10 +8,11 @@ import java.util.List;
 @Table(name="book")
 public class Book {
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String ISBN;
+    //@GeneratedValue(strategy = GenerationType.AUTO)
+    private String isbn;
     private String title;
     private String type;
+    private String publisher;
     private int release_year;
     private int number_of_pages;
     private double price;
@@ -21,10 +22,18 @@ public class Book {
 
     }
 
-    public Book(String ISBN, String title, String type, int release_year, int number_of_pages, double price, int available_stock){
-        this.ISBN = ISBN;
+    public Book(String isbn,
+                String title,
+                String type,
+                String publisher,
+                int release_year,
+                int number_of_pages,
+                double price,
+                int available_stock){
+        this.isbn = isbn;
         this.title = title;
         this.type = type;
+        this.publisher = publisher;
         this.release_year = release_year;
         this.number_of_pages = number_of_pages;
         this.price = price;
@@ -47,6 +56,15 @@ public class Book {
         this.type = type;
     }
 
+    public String getPublisher(){
+        return publisher;
+    }
+
+    public void setPublisher(String publisher){
+        this.publisher = publisher;
+    }
+
+
     public int getRelease_year() {
         return release_year;
     }
@@ -63,12 +81,12 @@ public class Book {
         this.number_of_pages = number_of_pages;
     }
 
-    public String getISBN() {
-        return ISBN;
+    public String getIsbn() {
+        return isbn;
     }
 
-    public void setISBN(String ISBN) {
-        this.ISBN = ISBN;
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 
     public int getAvailable_stock() {
