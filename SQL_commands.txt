@@ -32,6 +32,8 @@
  grant select, insert, drop, update on books.* to 'web_user'@'localhost';            // this is made from root user
 
  
+
+ show create table book;
  
  
  

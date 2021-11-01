@@ -1,22 +1,50 @@
-package com.example.demo.Model.Book;
+package com.example.pos.Model.Book;
+
+import com.example.pos.Model.Author.Author;
+import com.sun.istack.NotNull;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
 @Table(name="book")
 public class Book {
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
+    @NotNull
     private String isbn;
+
+    @NotNull
+    @Column(unique=true)
     private String title;
+
+    @NotNull
     private String type;
+
+    @NotNull
     private String publisher;
+
+    @NotNull
     private int release_year;
+
+    @NotNull
     private int number_of_pages;
+
+    @NotNull
     private double price;
+
+    @NotNull
     private int available_stock;
+
+    @ManyToMany
+    @JoinTable(name="book_author",
+                joinColumns = {@JoinColumn(name="book_isbn")},
+                inverseJoinColumns = {@JoinColumn(name="author_id")})
+    private Set<Author> authors = new HashSet<>();
+
+
+
 
     public Book(){
 
@@ -40,11 +68,11 @@ public class Book {
         this.available_stock = available_stock;
     }
 
-    public String getName() {
+    public String getTitle() {
         return title;
     }
 
-    public void setName(String name) {
+    public void setTitle(String name) {
         this.title = name;
     }
 

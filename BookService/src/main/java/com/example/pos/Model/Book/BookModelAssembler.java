@@ -1,9 +1,4 @@
-package com.example.demo.Model.Book;
-
-import com.example.demo.Controller.BookController;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
+package com.example.pos.Model.Book;
 
 //@Component
 //public class BookModelAssembler implements RepresentationModelAssembler<Book, EntityModel<Book>> {

@@ -1,15 +1,28 @@
-package com.example.demo.Model.Author;
+package com.example.pos.Model.Author;
+
+import com.example.pos.Model.Book.Book;
+import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="author")
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @NotNull
     private Long id;
+
+    @NotNull
     private String firstName;
+
+    @NotNull
     private String lastName;
+
+    @ManyToMany(targetEntity = Author.class)
+    private Set<Book> books = new HashSet<>();
 
     public Author(){
 

@@ -1,4 +1,4 @@
-package com.example.demo.Model.BookAuthor;
+package com.example.pos.Model.BookAuthor;
 
 import javax.persistence.*;
 
@@ -8,7 +8,7 @@ public class BookAuthor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String ISBN;
+    private String isbn;
     private int id_author;
     private int indexAuthor;
 
@@ -23,12 +23,12 @@ public class BookAuthor {
         this.id = id;
     }
 
-    public String getISBN() {
-        return ISBN;
+    public String getIsbn() {
+        return isbn;
     }
 
-    public void setISBN(String ISBN) {
-        this.ISBN = ISBN;
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 
     public int getId_author() {

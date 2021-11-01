@@ -1,9 +1,9 @@
-package com.example.demo.View;
+package com.example.pos.Service;
 
-import com.example.demo.Model.Author.Author;
-import com.example.demo.Model.Author.AuthorRepository;
-import com.example.demo.Model.Book.Book;
-import com.example.demo.Model.Book.BookRepository;
+import com.example.pos.Model.Author.Author;
+import com.example.pos.Model.Author.AuthorRepository;
+import com.example.pos.Model.Book.Book;
+import com.example.pos.Model.Book.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,11 +13,10 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
+
 
     public BookService(BookRepository bookRepository, AuthorRepository authorRepository){
         this.bookRepository = bookRepository;
-        this.authorRepository = authorRepository;
     }
 
 
@@ -53,21 +52,14 @@ public class BookService {
         if(bookOptional.isPresent()) {
             throw new IllegalStateException("Book already exists!");
         }
+        Boolean existsTitle = bookRepository.existsByTitle(book.getTitle());
+        if(existsTitle) {
+            throw new IllegalStateException("Title is not unique!");
+        }
         return bookRepository.save(book);
-        //return book;
     }
 
-    public Author getAuthor(Long ID){
-        Optional<Author> authorOption = authorRepository.findById(ID);
 
-        if(authorOption.isPresent()){
-            return authorOption.get();
-        }
-        else
-        {
-            throw new IllegalStateException("Author with id: " + ID + " doesn't exists!");
-        }
-    }
 
 
 
