@@ -1,9 +1,9 @@
 package com.example.pos.Service;
 
-import com.example.pos.Model.Author.Author;
 import com.example.pos.Model.Author.AuthorRepository;
 import com.example.pos.Model.Book.Book;
 import com.example.pos.Model.Book.BookRepository;
+import com.example.pos.Model.BookReduceInfo.BookReduceInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -98,6 +98,17 @@ public class BookService {
         Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByGenreAndYear(genre, year));
         return bookOptional.get();
     }
+
+    public BookReduceInfo getBooksByIsbnVerboseFalse(String isbn){
+        Optional<Book> bookOptional = Optional.of(bookRepository.findByIsbnVerboseFalse(isbn));
+        BookReduceInfo bookReduceInfo = new BookReduceInfo(bookOptional.get().getIsbn(),
+                bookOptional.get().getTitle(),
+                bookOptional.get().getGenre());
+
+        return bookReduceInfo;
+    }
+
+
 
 
 

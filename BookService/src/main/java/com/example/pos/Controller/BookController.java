@@ -1,8 +1,8 @@
 package com.example.pos.Controller;
 
-import com.example.pos.Model.Author.Author;
 import com.example.pos.Model.Book.Book;
 import com.example.pos.Model.BookAuthor.BookAuthor;
+import com.example.pos.Model.BookReduceInfo.BookReduceInfo;
 import com.example.pos.Service.AuthorService;
 import com.example.pos.Service.BookAuthorService;
 import com.example.pos.Service.BookService;
@@ -12,7 +12,6 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -32,19 +31,19 @@ public class BookController {
     }
 
 
-//    @GetMapping("/books")
-//    public CollectionModel<Book> getBooks(){
-//        return CollectionModel.of(bookService.getBooks(),
-//                linkTo(methodOn(BookController.class).getBooks()).withSelfRel(),
-//                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
-//    }
+    @GetMapping("/booksAll")
+    public CollectionModel<Book> getBooks(){
+        return CollectionModel.of(bookService.getBooks(),
+                linkTo(methodOn(BookController.class).getBooks()).withSelfRel(),
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
+    }
 
-    @GetMapping("/books/{isbn}")
+    @RequestMapping(value="/books/{isbn}", method=RequestMethod.GET)
     public EntityModel<Book> getBooksByIsbn(@PathVariable(name="isbn")String isbn)
     {
         return EntityModel.of(bookService.getBooksByIsbn(isbn),
                 linkTo(methodOn(BookController.class).getBooksByIsbn(isbn)).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooksPerPage(0, 0)).withRel("bookcollection"));
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
     }
 
     @PostMapping("/addBook")
@@ -53,7 +52,7 @@ public class BookController {
 
         EntityModel<Book> entityModel = EntityModel.of(bookSaved,
                 linkTo(methodOn(BookController.class).getBooksByIsbn(bookSaved.getIsbn())).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooksPerPage(0, 0)).withRel("bookcollection"));
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
 
         return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
     }
@@ -66,7 +65,7 @@ public class BookController {
 
         EntityModel<BookAuthor> entityModel = EntityModel.of(bookAuthorSaved,
                 linkTo(methodOn(BookController.class).registerNewBookAuthor(bookAuthorSaved)).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooksPerPage(0,0)).withRel("bookcollection"));
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
 
         return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
     }
@@ -83,7 +82,7 @@ public class BookController {
 
         return CollectionModel.of(bookList,
                 linkTo(methodOn(BookController.class).getBooksPerPage(page, items_per_page)).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooksPerPage(page, items_per_page)).withRel("bookcollection"));
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
     }
 
     //@GetMapping("/books")
@@ -95,7 +94,7 @@ public class BookController {
 
         return CollectionModel.of(bookList,
                 linkTo(methodOn(BookController.class).getBooksPerPageWithItemsByDefault(page)).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooksPerPage(page, default_items_per_page)).withRel("bookcollection"));
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
     }
 
 
@@ -103,7 +102,7 @@ public class BookController {
     public CollectionModel<Book> getBooksByGenre(@RequestParam(name="genre") String genre){
         return CollectionModel.of(bookService.getBooksByGenre(genre),
                 linkTo(methodOn(BookController.class).getBooksByGenre(genre)).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooksPerPage(0, 0)).withRel("bookcollection"));
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
     }
 
 
@@ -111,7 +110,7 @@ public class BookController {
     public CollectionModel<Book> getBooksByYear(@RequestParam(name="year") Integer year){
         return CollectionModel.of(bookService.getBooksByYear(year),
                 linkTo(methodOn(BookController.class).getBooksByYear(year)).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooksPerPage(0, 0)).withRel("bookcollection"));
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
     }
 
 
@@ -120,7 +119,19 @@ public class BookController {
                                             @RequestParam(name="genre")String genre){
         return CollectionModel.of(bookService.getBooksByGenreAndYear(genre, year),
                 linkTo(methodOn(BookController.class).getBooksByGenreAndYear(year, genre)).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooksPerPage(0, 0)).withRel("bookcollection"));
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
     }
+
+
+    @RequestMapping(value="/books/{isbn}", params="verbose", method=RequestMethod.GET)
+    public EntityModel<BookReduceInfo> getBooksByIsbnVerboseFalse(@PathVariable(name="isbn")String isbn,
+                                                                  @RequestParam(name="verbose") String verbose)
+    {
+        return EntityModel.of(bookService.getBooksByIsbnVerboseFalse(isbn),
+                linkTo(methodOn(BookController.class).getBooksByIsbn(isbn)).withSelfRel(),
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
+    }
+
+
 
 }

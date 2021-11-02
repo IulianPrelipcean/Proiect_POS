@@ -33,7 +33,7 @@ public class BookAuthorService {
         for(BookAuthor bookAuthor : bookAuthorsList)
         {
             authorsList.add(bookAuthor.getAuthor());
-            System.out.println("autor==  " +  bookAuthor.getAuthor().getFirstName());
+            System.out.println("autor==  " +  bookAuthor.getAuthor().getFirst_name());
         }
 
         return authorsList;

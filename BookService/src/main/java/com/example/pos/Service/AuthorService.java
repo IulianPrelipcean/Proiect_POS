@@ -43,13 +43,25 @@ public class AuthorService {
     }
 
     public Author addNewAuthor(Author author){
-//        Optional<Author> authorOptional = authorRepository.findById(author.getId());
-//        if(authorOptional.isPresent()){
-//            throw new IllegalStateException("Author with id: " + author.getId() + " already exists!");
-//        }
-
         return authorRepository.save(author);
     }
+
+    public List<Author> getAuthorPartialMatch(String first_name){
+        Optional<List<Author>> authorPartialMatch = Optional.of(authorRepository.findByNamePartialMatch(first_name));
+        if(authorPartialMatch.isPresent())
+        {
+            return authorPartialMatch.get();
+        }
+        else
+            throw new IllegalStateException("No match found for this name! ");
+    }
+
+    public List<Author> getAuthorExactMatch(String first_name){
+        Optional<List<Author>> authorExactMatch = Optional.of(authorRepository.findByNameExactMatch(first_name));
+        return authorExactMatch.get();
+    }
+
+
 
 
 }
