@@ -36,6 +36,11 @@
  show create table book;
  
  
+  alter table book rename column type to genre;
+
+ 
+ 
+ 
  
  
  Titi-Gabriel Guzu9:24 PM

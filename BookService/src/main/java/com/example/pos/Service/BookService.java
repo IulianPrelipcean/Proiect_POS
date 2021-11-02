@@ -4,6 +4,9 @@ import com.example.pos.Model.Author.Author;
 import com.example.pos.Model.Author.AuthorRepository;
 import com.example.pos.Model.Book.Book;
 import com.example.pos.Model.Book.BookRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,8 +65,39 @@ public class BookService {
     }
 
 
+    public List<Book> getBooksPerPage(int page, int items_per_page){
+        Pageable paging = PageRequest.of(page, items_per_page);
+        Page<Book> pageResult = bookRepository.findAll(paging);
 
+        return pageResult.toList();
+    }
 
+    public List<Book> getBooksByGenre(String genre){
+        Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByGenre(genre));
+        if(bookOptional.isPresent())
+        {
+            return bookOptional.get();
+        }
+        else{
+            throw new IllegalStateException("No book with this genre!");
+        }
+    }
+
+    public List<Book> getBooksByYear(Integer year){
+        Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByRelease_year(year));
+        if(bookOptional.isPresent())
+        {
+            return bookOptional.get();
+        }
+        else{
+            throw new IllegalStateException("No book with this release year!");
+        }
+    }
+
+    public List<Book> getBooksByGenreAndYear(String genre, Integer year){
+        Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByGenreAndYear(genre, year));
+        return bookOptional.get();
+    }
 
 
 

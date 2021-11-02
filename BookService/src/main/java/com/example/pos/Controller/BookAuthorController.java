@@ -37,16 +37,13 @@ public class BookAuthorController {
     }
 
 
-    //public CollectionModel<Author> getAuthorsForIsbn(@PathVariable(name="isbn") String isbn){
-
     @GetMapping("/books/{isbn}/authors")
     public CollectionModel<Author> getAuthorsForIsbn(@PathVariable(name="isbn") String isbn){
-//    public void getAuthorsForIsbn(@PathVariable(name="isbn") String isbn){
 
-        List<Author> authorList = bookAuthorService.getAuthorsForIsbn(isbn);
-        for(Author author: authorList){
-            System.out.println("in controller: ---- " + author.getLastName());
-        }
+//        List<Author> authorList = bookAuthorService.getAuthorsForIsbn(isbn);
+//        for(Author author: authorList){
+//            System.out.println("in controller: ---- " + author.getLastName());
+//        }
 
 
         return CollectionModel.of(bookAuthorService.getAuthorsForIsbn(isbn),

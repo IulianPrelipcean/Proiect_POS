@@ -20,13 +20,13 @@ public class Book {
     private String title;
 
     @NotNull
-    private String type;
+    private String genre;
 
     @NotNull
     private String publisher;
 
     @NotNull
-    private int release_year;
+    private Integer release_year;
 
     @NotNull
     private int number_of_pages;
@@ -52,7 +52,7 @@ public class Book {
 
     public Book(String isbn,
                 String title,
-                String type,
+                String genre,
                 String publisher,
                 int release_year,
                 int number_of_pages,
@@ -60,7 +60,7 @@ public class Book {
                 int available_stock){
         this.isbn = isbn;
         this.title = title;
-        this.type = type;
+        this.genre = genre;
         this.publisher = publisher;
         this.release_year = release_year;
         this.number_of_pages = number_of_pages;
@@ -76,12 +76,12 @@ public class Book {
         this.title = name;
     }
 
-    public String getType() {
-        return type;
+    public String getGenre() {
+        return genre;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
     public String getPublisher(){
@@ -97,7 +97,7 @@ public class Book {
         return release_year;
     }
 
-    public void setRelease_year(int release_year) {
+    public void setRelease_year(Integer release_year) {
         this.release_year = release_year;
     }
 

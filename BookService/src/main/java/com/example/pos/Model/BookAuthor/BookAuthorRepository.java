@@ -13,4 +13,6 @@ public interface BookAuthorRepository extends JpaRepository<BookAuthor, Long> {
 
     //@Override
     List<BookAuthor> findByBook_isbn(String isbn);
+    //List<BookAuthor> findByIndex_author(String index_author);
+
 }
