@@ -1,6 +1,7 @@
 package com.example.pos.Model.Author;
 
 import com.example.pos.Model.Book.Book;
+import com.example.pos.Model.BookAuthor.BookAuthor;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
@@ -21,8 +22,13 @@ public class Author {
     @NotNull
     private String lastName;
 
-    @ManyToMany(targetEntity = Author.class)
-    private Set<Book> books = new HashSet<>();
+//    @OneToMany(mappedBy="book_author", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+//    private Set<BookAuthor> bookAuthors = new HashSet<>();
+
+
+
+//    @ManyToMany(targetEntity = Author.class)
+//    private Set<Book> books = new HashSet<>();
 
     public Author(){
 

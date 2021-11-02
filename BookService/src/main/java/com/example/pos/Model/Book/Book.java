@@ -37,11 +37,11 @@ public class Book {
     @NotNull
     private int available_stock;
 
-    @ManyToMany
-    @JoinTable(name="book_author",
-                joinColumns = {@JoinColumn(name="book_isbn")},
-                inverseJoinColumns = {@JoinColumn(name="author_id")})
-    private Set<Author> authors = new HashSet<>();
+//    @ManyToMany
+//    @JoinTable(name="book_author",
+//                joinColumns = {@JoinColumn(name="book_isbn")},
+//                inverseJoinColumns = {@JoinColumn(name="author_id")})
+//    private Set<Author> authors = new HashSet<>();
 
 
 

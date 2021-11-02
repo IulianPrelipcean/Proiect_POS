@@ -2,13 +2,17 @@ package com.example.pos.Controller;
 
 import com.example.pos.Model.Author.Author;
 import com.example.pos.Model.Book.Book;
+import com.example.pos.Model.BookAuthor.BookAuthor;
 import com.example.pos.Service.AuthorService;
+import com.example.pos.Service.BookAuthorService;
 import com.example.pos.Service.BookService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -18,10 +22,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class BookController {
     private final BookService bookService;
     private final AuthorService authorService;
+    private final BookAuthorService bookAuthorService;
 
-    public BookController(BookService bookService, AuthorService authorService){
+    public BookController(BookService bookService, AuthorService authorService, BookAuthorService bookAuthorService){
         this.bookService = bookService;
         this.authorService = authorService;
+        this.bookAuthorService = bookAuthorService;
     }
 
 //    @GetMapping("/books")
@@ -74,22 +80,22 @@ public class BookController {
     }
 
 
-    @GetMapping("/authors/{id}")
-    public EntityModel<Author> getAuthorById(@PathVariable(name="id")Long id){
-        return EntityModel.of(authorService.getAuthor(id),
-                linkTo(methodOn(BookController.class).getAuthorById(id)).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
-    }
+    @PostMapping("/addBookAuthor")
+    public ResponseEntity<?> registerNewBookAuthor(@RequestBody BookAuthor bookAuthor){
+        BookAuthor bookAuthorSaved = bookAuthorService.addNewBookAuthor(bookAuthor);
 
-    @PostMapping("/addAuthor")
-    public ResponseEntity<?> registerNewAuthor(@RequestBody Author author){
-        Author authorSaved = authorService.addNewAuthor(author);
-
-        EntityModel<Author> entityModel = EntityModel.of(authorSaved,
-                linkTo(methodOn(BookController.class).getAuthorById(authorSaved.getId())).withSelfRel(),
+        EntityModel<BookAuthor> entityModel = EntityModel.of(bookAuthorSaved,
+                linkTo(methodOn(BookController.class).registerNewBookAuthor(bookAuthorSaved)).withSelfRel(),
                 linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
 
         return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
     }
+
+
+
+
+
+
+
 
 }

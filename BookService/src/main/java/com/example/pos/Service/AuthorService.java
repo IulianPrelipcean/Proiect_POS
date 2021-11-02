@@ -5,6 +5,7 @@ import com.example.pos.Model.Author.Author;
 import com.example.pos.Model.Author.AuthorRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,6 +15,19 @@ public class AuthorService {
 
     public AuthorService(AuthorRepository authorRepository){
         this.authorRepository = authorRepository;
+    }
+
+    public List<Author> getAuthors(){
+        Optional<List<Author>> optionalAuthors = Optional.of(authorRepository.findAll());
+        if(optionalAuthors.isPresent())
+        {
+            return optionalAuthors.get();
+        }
+        else
+        {
+            throw new IllegalStateException("There is no authors!");
+        }
+
     }
 
     public Author getAuthor(Long ID){
