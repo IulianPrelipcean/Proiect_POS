@@ -94,7 +94,7 @@ public class BookService {
         }
     }
 
-    public List<Book> getBooksByGenreAndYear(String genre, Integer year){
+    public List<Book> getBooksByGenreAndYear(Integer year, String genre){
         Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByGenreAndYear(genre, year));
         return bookOptional.get();
     }
