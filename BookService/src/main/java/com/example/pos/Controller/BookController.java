@@ -73,17 +73,7 @@ public class BookController {
     }
 
 
-    // de mutat in BookAuthorController !!!
-    @PostMapping("/addBookAuthor")
-    public ResponseEntity<?> registerNewBookAuthor(@RequestBody BookAuthor bookAuthor){
-        BookAuthor bookAuthorSaved = bookAuthorService.addNewBookAuthor(bookAuthor);
 
-        EntityModel<BookAuthor> entityModel = EntityModel.of(bookAuthorSaved,
-                linkTo(methodOn(BookController.class).registerNewBookAuthor(bookAuthorSaved)).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
-
-        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
-    }
 
 
 //    @GetMapping("/books")
