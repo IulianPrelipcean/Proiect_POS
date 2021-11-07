@@ -28,7 +28,7 @@ public class AuthorController {
     public CollectionModel<Author> getAuthors(){
         return CollectionModel.of(authorService.getAuthors(),
                 linkTo(methodOn(AuthorService.class).getAuthors()).withSelfRel(),
-                linkTo(methodOn(AuthorService.class).getAuthors()).withRel("bookcollection"));
+                linkTo(AuthorService.class).withRel("bookcollection"));
     }
 
 
@@ -36,7 +36,7 @@ public class AuthorController {
     public EntityModel<Author> getAuthorById(@PathVariable(name="id")Long id){
         return EntityModel.of(authorService.getAuthor(id),
                 linkTo(methodOn(AuthorController.class).getAuthorById(id)).withSelfRel(),
-                linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection"));
+                linkTo(AuthorController.class).withRel("bookcollection"));
     }
 
     @PostMapping("/addAuthor")
@@ -45,7 +45,7 @@ public class AuthorController {
 
         EntityModel<Author> entityModel = EntityModel.of(authorSaved,
                 linkTo(methodOn(AuthorController.class).getAuthorById(authorSaved.getId())).withSelfRel(),
-                linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection"));
+                linkTo(AuthorController.class).withRel("bookcollection"));
 
         return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
     }
@@ -56,7 +56,7 @@ public class AuthorController {
 
         return CollectionModel.of(author,
                 linkTo(methodOn(AuthorController.class).getAuthorPartialMatch(first_name)).withSelfRel(),
-                linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection"));
+                linkTo(AuthorController.class).withRel("bookcollection"));
     }
 
 
@@ -67,7 +67,7 @@ public class AuthorController {
 
         return CollectionModel.of(author,
                 linkTo(methodOn(AuthorController.class).getAuthorExactMatch(first_name, match)).withSelfRel(),
-                linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection"));
+                linkTo(AuthorController.class).withRel("bookcollection"));
     }
 
 

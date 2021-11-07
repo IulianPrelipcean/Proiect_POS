@@ -1,0 +1,3 @@
+ - de prelucrat si imbunatatit hateos
+ - de creat exceptii
+ - 

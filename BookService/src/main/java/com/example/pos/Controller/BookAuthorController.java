@@ -47,8 +47,8 @@ public class BookAuthorController {
 
 
         return CollectionModel.of(bookAuthorService.getAuthorsForIsbn(isbn),
-                linkTo(methodOn(BookAuthorController.class).getAuthorsForIsbn(isbn)).withSelfRel());
-                //linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
+                linkTo(methodOn(BookAuthorController.class).getAuthorsForIsbn(isbn)).withSelfRel(),
+                linkTo(BookAuthorController.class).withRel("bookcollection"));
     }
 
 
