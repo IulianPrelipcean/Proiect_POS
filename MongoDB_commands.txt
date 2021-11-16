@@ -1,0 +1,50 @@
+
+initial se ruleaza "sudo service mongod restart" din terminal
+se ruleaza "mongosh" din terminal pentru a deschide baza de date
+# mongosh
+
+pentru a intra in baza de date se mai poate folosi comanda "mongo" , insa metoda este deprecated si va fi stearsa
+# mongo
+
+
+http://localhost:27017/             // mongo port
+
+
+// trebuie sa fii in tabela admin
+// folosim comanda "use admin;" inainte de adaugarea noului user; 
+db.createUser({user: "root_mongo", pwd:"root_mongo", roles:[{role:"userAdminAnyDatabase", db:"admin"}]  })
+
+// trebuie sa fii in tabela bookorders
+// folosim comanda "use bookorders;" inainte de adaugarea noului user; 
+db.createUser({user: "db_manager", pwd:"db_manager", roles:[{role:"dbOwner", db:"bookorders"}]  })
+
+db.createUser({user: "web_user", pwd:"web_user", roles:[{role:"readWrite", db:"bookorders"}]  })
+
+
+// trebuie sa fii in baza de date in care este user-ul
+db.dropUser("root_mongo")
+
+
+
+db.getName()            // returneaza numele bazei de date pe care lucrez 
+db.getUsers()
+show users; 
+
+
+show dbs                            // afiseaza bazele de date existente
+show databases                      // afiseaza bazele de date existente
+
+use test                            // foloseste baza de date "test"
+show collections                    // afiseaza tabelele(colectiile) din baza de date
+db.createCollection("students")         // creaza tabela "studenti"
+db.students.insert({"name":"Alice", "age":"20"})    // insereaza date in colectia "students"
+db.students.find()                   // afiseaza toate inregistrarile din tabela "students"
+db.students.find({name:"Alex"})      // afiseaza inregistrarile care au campul name=="Alex"   
+db.students.drop();                 // sterge colectia "students"
+
+
+
+
+
+
+
