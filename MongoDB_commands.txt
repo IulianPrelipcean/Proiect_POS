@@ -1,10 +1,25 @@
 
+sudo service mongod restart
+
+sudo systemctl status mongod
+sudo systemctl stop mongod
+
+
 initial se ruleaza "sudo service mongod restart" din terminal
 se ruleaza "mongosh" din terminal pentru a deschide baza de date
 # mongosh
 
 pentru a intra in baza de date se mai poate folosi comanda "mongo" , insa metoda este deprecated si va fi stearsa
 # mongo
+
+
+//* ---------------
+
+Daca pornesc container-ul docker ce are versiunea 4.4, apoi pun in terminal comanda "mongosh" imi va deschide versiunea 4.4 (cea de container"
+In schimb daca container-ul este inchis si rulez comanda "mongosh", dupa un eventual "sudo service mongod restart" imi va deschide versiunea 5.0.3
+Pentru a deschide din nou containerul trebuie sa inchid versiunea 5.0.3 cu comanda "sudo systemctl stop mongod"
+
+//* --------------
 
 
 http://localhost:27017/             // mongo port
@@ -14,7 +29,7 @@ http://localhost:27017/             // mongo port
 // folosim comanda "use admin;" inainte de adaugarea noului user; 
 db.createUser({user: "root_mongo", pwd:"root_mongo", roles:[{role:"userAdminAnyDatabase", db:"admin"}]  })
 
-// trebuie sa fii in tabela bookorders
+// trebuie sa fii in baza de date bookorders
 // folosim comanda "use bookorders;" inainte de adaugarea noului user; 
 db.createUser({user: "db_manager", pwd:"db_manager", roles:[{role:"dbOwner", db:"bookorders"}]  })
 
@@ -42,6 +57,10 @@ db.students.find()                   // afiseaza toate inregistrarile din tabela
 db.students.find({name:"Alex"})      // afiseaza inregistrarile care au campul name=="Alex"   
 db.students.drop();                 // sterge colectia "students"
 
+
+-- pt a sterge o baza de date
+use orders;
+db.dropDatabase();
 
 
 

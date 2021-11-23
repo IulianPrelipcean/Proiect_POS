@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<soapenv:Envelope 
+    xmlns:soapenv="http://pos.examples.soap.stateless/Calculator"
+    xmlns:m="http://pos.examples.soap.stateless/Calculator">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <m:addRequest>
+         <m:name>12</m:name>
+      </m:addRequest>
+   </soapenv:Body>
+</soapenv:Envelope> 

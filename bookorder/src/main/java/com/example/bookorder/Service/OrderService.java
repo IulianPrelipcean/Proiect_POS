@@ -1,30 +1,33 @@
 package com.example.bookorder.Service;
 
-
-import com.example.bookorder.Model.Customer;
-import com.example.bookorder.Model.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+//
+import com.example.bookorder.Model.Order;
+import com.example.bookorder.Model.OrderRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class OrderService {
 
-    @Autowired
-    private  CustomerRepository customerRepository;
 
-//    public OrderService(CustomerRepository customerRepository){
-//        this.customerRepository = customerRepository;
+    private final OrderRepository orderRepository;
+
+//    public OrderService(OrderRepository orderRepository) {
+//        this.orderRepository = orderRepository;
 //    }
 
-    public Customer getCustomer(){
-        Optional<Customer> optionalCustomer = Optional.ofNullable(customerRepository.findByIdName("andre"));
-        return optionalCustomer.get();
+
+    public List<Order> getOrders() {
+        List<Order> order = orderRepository.findAll();
+        return order;
+//        Optional<Order> optionalCustomer = Optional.ofNullable(orderRepository.findByIdName("ali"));
+//        return optionalCustomer.get();
+//        return new Order("first", "last");
     }
-
-
 
 
 }
