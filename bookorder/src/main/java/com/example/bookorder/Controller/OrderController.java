@@ -6,10 +6,7 @@ import com.example.bookorder.Model.Order;
 import com.example.bookorder.Service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,10 +34,31 @@ public class OrderController {
 
 
 
-    @RequestMapping(value="/client", method= RequestMethod.GET)
-    public List<Order> getClients(){
+    @RequestMapping(value="/orders", method= RequestMethod.GET)
+    public List<Order> getOrders(){
         return orderService.getOrders();
     }
+
+//    @GetMapping(value="/orders/{clientId}")
+//    public Order getOrdersById(@PathVariable(name="clientId") String id){
+//        return orderService.getOrderById(id);
+//    }
+
+    @GetMapping(value="/order/{orderId}")
+    public Order getOrdersById(@PathVariable(name="orderId") String id){
+        return orderService.getOrderById(id);
+    }
+
+    @PostMapping(value="/addOrder")
+    public void addOrder(@RequestBody Order order){
+        orderService.addOrder(order);
+    }
+
+    @DeleteMapping(value="/deleteOrders")
+    public void deleteOrders(){
+        orderService.deleteOrders();
+    }
+
 
 
 //    @PathVariable(name="isbn")String isbn

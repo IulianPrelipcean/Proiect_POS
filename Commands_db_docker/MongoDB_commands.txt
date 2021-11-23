@@ -56,12 +56,15 @@ db.students.insert({"name":"Alice", "age":"20"})    // insereaza date in colecti
 db.students.find()                   // afiseaza toate inregistrarile din tabela "students"
 db.students.find({name:"Alex"})      // afiseaza inregistrarile care au campul name=="Alex"   
 db.students.drop();                 // sterge colectia "students"
-
+db.students.remove({});             // 
 
 -- pt a sterge o baza de date
 use orders;
 db.dropDatabase();
 
+
+
+db.client_1.insert({"id":"1", "firstName": "help", "lastName": "mepls"})
 
 
 
