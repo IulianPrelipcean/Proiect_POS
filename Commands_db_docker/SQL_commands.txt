@@ -1,3 +1,17 @@
+
+// ---------------------connect
+ conectare
+ comanda:   mysql -u root -p
+ password:  pw_db
+ 
+ // ---------------------
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
 // ---------------------create 
 
@@ -41,43 +55,19 @@
  
  
  
+ // ---------------------------------------------------- SOAP laboraot7-8  -------------
+ 
+ create database soap_users;
+ create table user(id int primary key not null, first_name varchar(20) not null, last_name varchar(20) not null, age int not null);
  
  
- Titi-Gabriel Guzu9:24 PM
-create table carte_autor(
-	isbn varchar(10) not null,
-	id_autor int(6) unsigned not null,
-	foreign key (isbn) references carte(isbn),
-	foreign key (id_autor) references autor(id),
-	unique (isbn, id_autor)
-);
-nu trebuie pus primarykey
-doar unique pe perechea aia
-
-
-Titi-Gabriel Guzu9:25 PM
-@NotNull
-    @ManyToMany(targetEntity = Author.class)
-    @JoinTable(
-            name = "carte_autor",
-            joinColumns = @JoinColumn(name = "isbn"),
-            inverseJoinColumns = @JoinColumn(name = "id_autor")
-    )
-    private List<Author> authors;
-se face automat
-de la adnotari
-
-
-@Override
-    public ResponseEntity<List<Author>> getBookAuthors(String isbn) {
-        Optional<Book> optBook = bookRepository.findById(isbn);
-        if(optBook.isPresent()){
-            return new ResponseEntity<>(optBook.get().getAuthors(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-    }
-@GetMapping("/{isbn}/authors")
-    public ResponseEntity<List<Author>> getBookAuthors(@PathVariable("isbn") String isbn){
-        return bookService.getBookAuthors(isbn);
-    }
+ 
+ 
+ // ---------------------------------------------------- /SOAP laboraot7-8  -------------
+ 
+ 
+ 
+ 
+ 
+ 
 
