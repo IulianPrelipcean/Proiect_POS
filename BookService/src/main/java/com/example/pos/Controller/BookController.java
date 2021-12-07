@@ -1,8 +1,10 @@
 package com.example.pos.Controller;
 
-import com.example.pos.Model.Book.Book;
-import com.example.pos.Model.BookAuthor.BookAuthor;
-import com.example.pos.Model.BookReduceInfo.BookReduceInfo;
+import com.example.pos.Model.DTO.BookDTO;
+import com.example.pos.Model.DTO.BookReduceInfoDTO;
+import com.example.pos.Model.Entities.Book.Book;
+import com.example.pos.Model.Entities.BookAuthor.BookAuthor;
+import com.example.pos.Model.Entities.BookReduceInfo.BookReduceInfo;
 import com.example.pos.Service.AuthorService;
 import com.example.pos.Service.BookAuthorService;
 import com.example.pos.Service.BookService;
@@ -32,27 +34,27 @@ public class BookController {
     }
 
 
-    //@GetMapping("/booksAll")
+
     // return all the books
-    @RequestMapping("/books")
-    public CollectionModel<EntityModel<Book>> getBooks(){
+    @GetMapping(value="/books")
+    public CollectionModel<EntityModel<BookDTO>> getBooks(){
 
-        List<Book> booksList = bookService.getBooks();
+        List<BookDTO> booksDTOList = bookService.getBooks();
 
-        List<EntityModel<Book>> booksEntity = booksList.stream()
-                .map(book -> EntityModel.of(book,
-                        linkTo(methodOn(BookController.class).getBooksByIsbn(book.getIsbn())).withSelfRel(),
+        List<EntityModel<BookDTO>> booksDTOEntity = booksDTOList.stream()
+                .map(bookDTO -> EntityModel.of(bookDTO,
+                        linkTo(methodOn(BookController.class).getBooksByIsbn(bookDTO.getIsbn())).withSelfRel(),
                         linkTo(methodOn(BookController.class).getBooks()).withSelfRel()))
                 .collect(Collectors.toList());
 
-        return CollectionModel.of(booksEntity,
+        return CollectionModel.of(booksDTOEntity,
                 linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
     }
 
 
     // return the books based on ISBN
-    @RequestMapping(value="/books/{isbn}", method=RequestMethod.GET)
-    public EntityModel<Book> getBooksByIsbn(@PathVariable(name="isbn")String isbn)
+    @GetMapping(value="/books/{isbn}")
+    public EntityModel<BookDTO> getBooksByIsbn(@PathVariable(name="isbn")String isbn)
     {
         return EntityModel.of(bookService.getBooksByIsbn(isbn),
                 linkTo(methodOn(BookController.class).getBooksByIsbn(isbn)).withSelfRel(),
@@ -60,31 +62,13 @@ public class BookController {
     }
 
 
-    // add a book in database with all the field completed
-    @PostMapping("/addBook")
-    public ResponseEntity<?> registerNewBook(@RequestBody Book book){
-        Book bookSaved = bookService.addNewBook(book);
-
-        EntityModel<Book> entityModel = EntityModel.of(bookSaved,
-                linkTo(methodOn(BookController.class).getBooksByIsbn(bookSaved.getIsbn())).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
-
-        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
-    }
-
-
-
-
-
-//    @GetMapping("/books")
     //  return the books based on page and items per page (pagination)
-    @RequestMapping(value="/books", params={"page", "items_per_page"}, method=RequestMethod.GET)
-    public CollectionModel<EntityModel<Book>> getBooksPerPage(@RequestParam(name="page") int page,
-                                                @RequestParam(name="items_per_page") int items_per_page){
+    @GetMapping(value="/books", params={"page", "items_per_page"})
+    public CollectionModel<EntityModel<BookDTO>> getBooksPerPage(@RequestParam(name="page") int page,
+                                                @RequestParam(name="items_per_page") int items_per_page) {
+        List<BookDTO> booksDTOList = bookService.getBooksPerPage(page, items_per_page);
 
-        List<Book> booksList = bookService.getBooksPerPage(page, items_per_page);
-
-        List<EntityModel<Book>> booksEntity = booksList.stream()
+        List<EntityModel<BookDTO>> booksEntity = booksDTOList.stream()
                 .map(book -> EntityModel.of(book,
                         linkTo(methodOn(BookController.class).getBooksPerPage(page, items_per_page)).withSelfRel(),
                         linkTo(methodOn(BookController.class).getBooks()).withSelfRel()))
@@ -96,13 +80,13 @@ public class BookController {
 
     //@GetMapping("/books")
     // //  return the books based on page and with a <default> items per page
-    @RequestMapping(value="/books", params="page", method=RequestMethod.GET)
-    public CollectionModel<EntityModel<Book>> getBooksPerPageWithItemsByDefault(@RequestParam(name="page") int page){
+    @GetMapping(value="/books", params="page")
+    public CollectionModel<EntityModel<BookDTO>> getBooksPerPageWithItemsByDefault(@RequestParam(name="page") int page){
 
         int default_items_per_page = 2;
-        List<Book> booksList = bookService.getBooksPerPage(page, default_items_per_page);
+        List<BookDTO> booksDTOList = bookService.getBooksPerPage(page, default_items_per_page);
 
-        List<EntityModel<Book>> booksEntity = booksList.stream()
+        List<EntityModel<BookDTO>> booksEntity = booksDTOList.stream()
                 .map(book -> EntityModel.of(book,
                         linkTo(methodOn(BookController.class).getBooksPerPageWithItemsByDefault(page)).withSelfRel(),
                         linkTo(methodOn(BookController.class).getBooks()).withSelfRel()))
@@ -114,12 +98,12 @@ public class BookController {
 
 
     // return the books based on genre
-    @RequestMapping(value="/books", params="genre", method=RequestMethod.GET)
-    public CollectionModel<EntityModel<Book>> getBooksByGenre(@RequestParam(name="genre") String genre){
+    @GetMapping(value="/books", params="genre")
+    public CollectionModel<EntityModel<BookDTO>> getBooksByGenre(@RequestParam(name="genre") String genre){
 
-        List<Book> booksList = bookService.getBooksByGenre(genre);
+        List<BookDTO> booksDTOList = bookService.getBooksByGenre(genre);
 
-        List<EntityModel<Book>> booksEntity = booksList.stream()
+        List<EntityModel<BookDTO>> booksEntity = booksDTOList.stream()
                 .map(book -> EntityModel.of(book,
                         linkTo(methodOn(BookController.class).getBooksByGenre(genre)).withSelfRel(),
                         linkTo(methodOn(BookController.class).getBooks()).withSelfRel()))
@@ -131,11 +115,11 @@ public class BookController {
 
 
     // return the books based on year
-    @RequestMapping(value="/books", params="year", method=RequestMethod.GET)
-    public CollectionModel<EntityModel<Book>> getBooksByYear(@RequestParam(name="year") Integer year){
-        List<Book> booksList = bookService.getBooksByYear(year);
+    @GetMapping(value="/books", params="year")
+    public CollectionModel<EntityModel<BookDTO>> getBooksByYear(@RequestParam(name="year") Integer year){
+        List<BookDTO> booksDTOList = bookService.getBooksByYear(year);
 
-        List<EntityModel<Book>> booksEntity = booksList.stream()
+        List<EntityModel<BookDTO>> booksEntity = booksDTOList.stream()
                 .map(book -> EntityModel.of(book,
                         linkTo(methodOn(BookController.class).getBooksByYear(year)).withSelfRel(),
                         linkTo(methodOn(BookController.class).getBooks()).withSelfRel()))
@@ -147,13 +131,13 @@ public class BookController {
 
 
     // return the books based on genre and year
-    @RequestMapping(value="/books", params={"genre", "year"}, method=RequestMethod.GET)
-    public CollectionModel<EntityModel<Book>> getBooksByGenreAndYear(@RequestParam(name="year") Integer year,
+    @GetMapping(value="/books", params={"genre", "year"})
+    public CollectionModel<EntityModel<BookDTO>> getBooksByGenreAndYear(@RequestParam(name="year") Integer year,
                                             @RequestParam(name="genre")String genre){
 
-        List<Book> booksList = bookService.getBooksByGenreAndYear(year, genre);
+        List<BookDTO> booksDTOList = bookService.getBooksByGenreAndYear(year, genre);
 
-        List<EntityModel<Book>> booksEntity = booksList.stream()
+        List<EntityModel<BookDTO>> booksEntity = booksDTOList.stream()
                 .map(book -> EntityModel.of(book,
                         linkTo(methodOn(BookController.class).getBooksByGenreAndYear(year, genre)).withSelfRel(),
                         linkTo(methodOn(BookController.class).getBooks()).withSelfRel()))
@@ -165,9 +149,9 @@ public class BookController {
 
 
     // return a book based on ISBN but with just some of the details(ISBN, title, genre), not all of them
-    @RequestMapping(value="/books/{isbn}", params="verbose", method=RequestMethod.GET)
-    public EntityModel<BookReduceInfo> getBooksByIsbnVerboseFalse(@PathVariable(name="isbn")String isbn,
-                                                                  @RequestParam(name="verbose") String verbose)
+    @GetMapping(value="/books/{isbn}", params="verbose")
+    public EntityModel<BookReduceInfoDTO> getBooksByIsbnVerboseFalse(@PathVariable(name="isbn")String isbn,
+                                                                     @RequestParam(name="verbose") String verbose)
     {
         return EntityModel.of(bookService.getBooksByIsbnVerboseFalse(isbn),
                 linkTo(methodOn(BookController.class).getBooksByIsbn(isbn)).withSelfRel(),
@@ -175,9 +159,19 @@ public class BookController {
     }
 
 
-//    @RequestMapping(method=RequestMethod.OPTIONS)
-//    public ResponseEntity
 
+    // -------------------------------------------------------------------------- POST -----------------------------
 
+    // add a book in database with all the field completed
+    @PostMapping(value="/addBook")
+    public ResponseEntity<?> registerNewBook(@RequestBody BookDTO bookDTO){
+        BookDTO bookSaved = bookService.addNewBook(bookDTO);
+
+        EntityModel<BookDTO> entityModel = EntityModel.of(bookSaved,
+                linkTo(methodOn(BookController.class).getBooksByIsbn(bookSaved.getIsbn())).withSelfRel(),
+                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
+
+        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+    }
 
 }

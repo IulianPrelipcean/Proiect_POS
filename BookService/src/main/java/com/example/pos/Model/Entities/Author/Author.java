@@ -1,14 +1,13 @@
-package com.example.pos.Model.Author;
+package com.example.pos.Model.Entities.Author;
 
-import com.example.pos.Model.Book.Book;
-import com.example.pos.Model.BookAuthor.BookAuthor;
+import com.example.pos.Model.Entities.BookAuthor.BookAuthor;
 import com.sun.istack.NotNull;
+import lombok.Builder;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
+@Builder
 @Table(name="author")
 public class Author {
     @Id
@@ -34,7 +33,7 @@ public class Author {
 
     }
 
-    public Author(Long id, String first_name, String lastName){
+    public Author(Long id, String first_name, String last_name){
         this.id = id;
         this.first_name = first_name;
         this.last_name = last_name;

@@ -46,14 +46,10 @@ public class OrderService {
         else{
             throw new IllegalStateException("The client doesn't exists!");
         }
-
-
-
-
     }
 
 
-    /*
+    /* TODO  ------------------ de verificat stocul disponibil pt fiecare carte
     comanda -> preia_id_client -> pentru fiecare isbn de carte verific daca e suficient stoc ->(daca DA) -> creez sau adaug un document in colectie
      */
     public void addOrder(Order order, String clientId){
@@ -77,7 +73,6 @@ public class OrderService {
             {
                 Order order = orderOptional.get();
                 order.setOrderStatus(orderStatus);
-                System.out.println("orderStatus: " + order.getOrderStatus());
                 orderRepository.save(order);
             }
             else{

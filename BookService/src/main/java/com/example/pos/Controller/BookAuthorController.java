@@ -1,19 +1,15 @@
 package com.example.pos.Controller;
 
 
-import com.example.pos.Model.Author.Author;
-import com.example.pos.Model.Book.Book;
-import com.example.pos.Model.BookAuthor.BookAuthor;
-import com.example.pos.Service.AuthorService;
+import com.example.pos.Model.Entities.Author.Author;
+import com.example.pos.Model.Entities.BookAuthor.BookAuthor;
 import com.example.pos.Service.BookAuthorService;
-import com.example.pos.Service.BookService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +35,7 @@ public class BookAuthorController {
     }
 
 
-    //
+    // get all the authors for a book isbn
     @GetMapping("/books/{isbn}/authors")
     public CollectionModel<EntityModel<Author>> getAuthorsForIsbn(@PathVariable(name="isbn") String isbn){
 
@@ -55,7 +51,7 @@ public class BookAuthorController {
     }
 
 
-
+    // add a book and the author
     @PostMapping("/addBookAuthor")
     public ResponseEntity<?> registerNewBookAuthor(@RequestBody BookAuthor bookAuthor){
         BookAuthor bookAuthorSaved = bookAuthorService.addNewBookAuthor(bookAuthor);

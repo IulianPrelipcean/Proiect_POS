@@ -1,8 +1,8 @@
 package com.example.pos.Controller;
 
 
-import com.example.pos.Model.Author.Author;
-import com.example.pos.Model.Book.Book;
+import com.example.pos.Model.DTO.AuthorDTO;
+import com.example.pos.Model.Entities.Author.Author;
 import com.example.pos.Service.AuthorService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -26,12 +26,13 @@ public class AuthorController {
     }
 
 
-    //@GetMapping("/authors")
-    @RequestMapping("/authors")
-    public CollectionModel<EntityModel<Author>> getAuthors(){
 
-        List<Author> authorsList = authorService.getAuthors();
-        List<EntityModel<Author>> authorEntity = authorsList.stream()
+    // return all the authors
+    @GetMapping("/authors")
+    public CollectionModel<EntityModel<AuthorDTO>> getAuthors(){
+
+        List<AuthorDTO> authorsDTOList = authorService.getAuthors();
+        List<EntityModel<AuthorDTO>> authorEntity = authorsDTOList.stream()
                 .map(author -> EntityModel.of(author,
                         linkTo(methodOn(AuthorController.class).getAuthorById(author.getId())).withSelfRel(),
                         linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection")))
@@ -42,29 +43,21 @@ public class AuthorController {
     }
 
 
+    // return the author base on ID
     @GetMapping("/authors/{id}")
-    public EntityModel<Author> getAuthorById(@PathVariable(name="id")Long id){
+    public EntityModel<AuthorDTO> getAuthorById(@PathVariable(name="id")Long id){
         return EntityModel.of(authorService.getAuthor(id),
                 linkTo(methodOn(AuthorController.class).getAuthorById(id)).withSelfRel(),
                 linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection"));
     }
 
-    @PostMapping("/addAuthor")
-    public ResponseEntity<?> registerNewAuthor(@RequestBody Author author){
-        Author authorSaved = authorService.addNewAuthor(author);
 
-        EntityModel<Author> entityModel = EntityModel.of(authorSaved,
-                linkTo(methodOn(AuthorController.class).getAuthorById(authorSaved.getId())).withSelfRel(),
-                linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection"));
+    // return an author based on a partially matching on its name
+    @GetMapping(value="/authors", params="name")
+    public CollectionModel<EntityModel<AuthorDTO>> getAuthorPartialMatch(@RequestParam(name="name") String first_name){
+        List<AuthorDTO> authorsDTOList = authorService.getAuthorPartialMatch(first_name);
 
-        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
-    }
-
-    @RequestMapping(value="/authors", params="name", method=RequestMethod.GET)
-    public CollectionModel<EntityModel<Author>> getAuthorPartialMatch(@RequestParam(name="name") String first_name){
-        List<Author> authorsList = authorService.getAuthorPartialMatch(first_name);
-
-        List<EntityModel<Author>> authorEntity = authorsList.stream()
+        List<EntityModel<AuthorDTO>> authorEntity = authorsDTOList.stream()
                 .map(author -> EntityModel.of(author,
                         linkTo(methodOn(AuthorController.class).getAuthorPartialMatch(first_name)).withSelfRel(),
                         linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection")))
@@ -75,12 +68,13 @@ public class AuthorController {
     }
 
 
-    @RequestMapping(value="/authors", params={"name", "match"}, method=RequestMethod.GET)
-    public CollectionModel<EntityModel<Author>> getAuthorExactMatch(@RequestParam(name="name") String first_name,
-                                                         @RequestParam(name="match") String match){
-        List<Author> authorsList = authorService.getAuthorExactMatch(first_name);
+    // return an author based on an exact matching on its name
+    @GetMapping(value="/authors", params={"name", "match"})
+    public CollectionModel<EntityModel<AuthorDTO>> getAuthorExactMatch(@RequestParam(name="name") String first_name,
+                                                                    @RequestParam(name="match") String match){
+        List<AuthorDTO> authorsDTOList = authorService.getAuthorExactMatch(first_name);
 
-        List<EntityModel<Author>> authorEntity = authorsList.stream()
+        List<EntityModel<AuthorDTO>> authorEntity = authorsDTOList.stream()
                 .map(author -> EntityModel.of(author,
                         linkTo(methodOn(AuthorController.class).getAuthorExactMatch(first_name, match)).withSelfRel(),
                         linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection")))
@@ -89,6 +83,22 @@ public class AuthorController {
         return CollectionModel.of(authorEntity,
                 linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection"));
     }
+
+
+
+    // add a new author
+    @PostMapping("/addAuthor")
+    public ResponseEntity<?> registerNewAuthor(@RequestBody AuthorDTO authorDTO){
+        AuthorDTO authorDTOSaved = authorService.addNewAuthor(authorDTO);
+
+        EntityModel<AuthorDTO> entityModel = EntityModel.of(authorDTOSaved,
+                linkTo(methodOn(AuthorController.class).getAuthorById(authorDTOSaved.getId())).withSelfRel(),
+                linkTo(methodOn(AuthorController.class).getAuthors()).withRel("bookcollection"));
+
+        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+    }
+
+
 
 
 }

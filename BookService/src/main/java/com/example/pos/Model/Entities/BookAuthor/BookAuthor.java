@@ -1,7 +1,8 @@
-package com.example.pos.Model.BookAuthor;
+package com.example.pos.Model.Entities.BookAuthor;
 
-import com.example.pos.Model.Author.Author;
-import com.example.pos.Model.Book.Book;
+import com.example.pos.Model.Entities.Author.Author;
+import com.example.pos.Model.Entities.Book.Book;
+import lombok.Builder;
 
 import javax.persistence.*;
 

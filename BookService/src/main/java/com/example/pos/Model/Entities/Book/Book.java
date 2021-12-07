@@ -1,14 +1,14 @@
-package com.example.pos.Model.Book;
+package com.example.pos.Model.Entities.Book;
 
-import com.example.pos.Model.Author.Author;
+import com.example.pos.Model.Entities.Author.Author;
 import com.sun.istack.NotNull;
+import lombok.Builder;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 
 @Entity
+@Builder
 @Table(name="book")
 public class Book {
     @Id

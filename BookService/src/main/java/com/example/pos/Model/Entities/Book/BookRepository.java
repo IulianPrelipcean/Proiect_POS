@@ -1,4 +1,4 @@
-package com.example.pos.Model.Book;
+package com.example.pos.Model.Entities.Book;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;

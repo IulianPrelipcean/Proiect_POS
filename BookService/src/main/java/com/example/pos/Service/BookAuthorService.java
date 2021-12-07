@@ -1,12 +1,11 @@
 package com.example.pos.Service;
 
 
-import com.example.pos.Model.Author.Author;
-import com.example.pos.Model.BookAuthor.BookAuthor;
-import com.example.pos.Model.BookAuthor.BookAuthorRepository;
+import com.example.pos.Model.Entities.Author.Author;
+import com.example.pos.Model.Entities.BookAuthor.BookAuthor;
+import com.example.pos.Model.Entities.BookAuthor.BookAuthorRepository;
 import org.springframework.stereotype.Service;
 
-import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

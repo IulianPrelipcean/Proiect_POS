@@ -1,6 +1,8 @@
-package com.example.pos.Model.BookReduceInfo;
+package com.example.pos.Model.Entities.BookReduceInfo;
 
+import lombok.Builder;
 
+@Builder
 public class BookReduceInfo {
 
     private String isbn;

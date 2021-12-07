@@ -1,9 +1,15 @@
 package com.example.pos.Service;
 
-import com.example.pos.Model.Author.AuthorRepository;
-import com.example.pos.Model.Book.Book;
-import com.example.pos.Model.Book.BookRepository;
-import com.example.pos.Model.BookReduceInfo.BookReduceInfo;
+import com.example.pos.Model.DTO.BookDTO;
+import com.example.pos.Model.DTO.BookReduceInfoDTO;
+import com.example.pos.Model.Entities.Author.AuthorRepository;
+import com.example.pos.Model.Entities.Book.Book;
+import com.example.pos.Model.Entities.Book.BookRepository;
+import com.example.pos.Model.Entities.BookReduceInfo.BookReduceInfo;
+import com.example.pos.Model.Mappers.BookMapper;
+import com.example.pos.Model.Mappers.BookReduceInfoMapper;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Data
 @Service
 public class BookService {
 
@@ -25,23 +32,27 @@ public class BookService {
     }
 
 
-    public List<Book> getBooks(){
+
+
+    public List<BookDTO> getBooks(){
         Optional<List<Book>> booksOption = Optional.of(bookRepository.findAll());
         if(!booksOption.isPresent()){
             throw new IllegalStateException("There is no book !");
         }
         else{
-            return booksOption.get();
+            List<Book> bookList = booksOption.get();
+            return BookMapper.bookToBookDTOList(bookList);
         }
     }
 
 
-    public Book getBooksByIsbn(String isbn){
+    public BookDTO getBooksByIsbn(String isbn){
         Optional<Book> bookOption = bookRepository.findById(isbn);
 //        Book bookOption = bookRepository.findById(ISBN).orElse(null);
 //        return bookOption;
         if (bookOption.isPresent()){
-            return bookOption.get();
+            Book book = bookOption.get();
+            return BookMapper.bookToBookDTO(book);
         }
         else
         {
@@ -52,7 +63,71 @@ public class BookService {
         //return Book.getBooks();
     }
 
-    public Book addNewBook(Book book){
+
+
+
+
+    public List<BookDTO> getBooksPerPage(int page, int items_per_page){
+        Pageable paging = PageRequest.of(page, items_per_page);
+        Page<Book> pageResult = bookRepository.findAll(paging);
+        List<Book> bookList = pageResult.toList();
+
+        return BookMapper.bookToBookDTOList(bookList);
+    }
+
+
+    public List<BookDTO> getBooksByGenre(String genre){
+        Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByGenre(genre));
+        if(bookOptional.isPresent())
+        {
+            List<Book> bookList = bookOptional.get();
+            return BookMapper.bookToBookDTOList(bookList);
+        }
+        else{
+            throw new IllegalStateException("No book with this genre!");
+        }
+    }
+
+
+    public List<BookDTO> getBooksByYear(Integer year){
+        Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByRelease_year(year));
+        if(bookOptional.isPresent())
+        {
+            List<Book> bookList = bookOptional.get();
+            return BookMapper.bookToBookDTOList(bookList);
+        }
+        else{
+            throw new IllegalStateException("No book with this release year!");
+        }
+    }
+
+
+    public List<BookDTO> getBooksByGenreAndYear(Integer year, String genre){
+        Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByGenreAndYear(genre, year));
+        List<Book> bookList = bookOptional.get();
+        return BookMapper.bookToBookDTOList(bookList);
+    }
+
+
+    public BookReduceInfoDTO getBooksByIsbnVerboseFalse(String isbn){
+        Optional<Book> bookOptional = Optional.of(bookRepository.findByIsbnVerboseFalse(isbn));
+        BookReduceInfo bookReduceInfo = new BookReduceInfo(
+                bookOptional.get().getIsbn(),
+                bookOptional.get().getTitle(),
+                bookOptional.get().getGenre());
+
+        BookReduceInfoDTO bookReduceInfoDTO = BookReduceInfoMapper.bookReduceToBookReduceDTO(bookReduceInfo);
+
+        return bookReduceInfoDTO;
+    }
+
+
+
+    // --------------------------------------------------------------- POST ----------------------------------
+
+    public BookDTO addNewBook(BookDTO bookDTO){
+        Book book = BookMapper.bookDTOToBook(bookDTO);
+
         Optional<Book> bookOptional = bookRepository.findById(book.getIsbn());
         if(bookOptional.isPresent()) {
             throw new IllegalStateException("Book already exists!");
@@ -61,54 +136,8 @@ public class BookService {
         if(existsTitle) {
             throw new IllegalStateException("Title is not unique!");
         }
-        return bookRepository.save(book);
+        return BookMapper.bookToBookDTO(bookRepository.save(book));
     }
-
-
-    public List<Book> getBooksPerPage(int page, int items_per_page){
-        Pageable paging = PageRequest.of(page, items_per_page);
-        Page<Book> pageResult = bookRepository.findAll(paging);
-
-        return pageResult.toList();
-    }
-
-    public List<Book> getBooksByGenre(String genre){
-        Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByGenre(genre));
-        if(bookOptional.isPresent())
-        {
-            return bookOptional.get();
-        }
-        else{
-            throw new IllegalStateException("No book with this genre!");
-        }
-    }
-
-    public List<Book> getBooksByYear(Integer year){
-        Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByRelease_year(year));
-        if(bookOptional.isPresent())
-        {
-            return bookOptional.get();
-        }
-        else{
-            throw new IllegalStateException("No book with this release year!");
-        }
-    }
-
-    public List<Book> getBooksByGenreAndYear(Integer year, String genre){
-        Optional<List<Book>> bookOptional = Optional.of(bookRepository.findByGenreAndYear(genre, year));
-        return bookOptional.get();
-    }
-
-    public BookReduceInfo getBooksByIsbnVerboseFalse(String isbn){
-        Optional<Book> bookOptional = Optional.of(bookRepository.findByIsbnVerboseFalse(isbn));
-        BookReduceInfo bookReduceInfo = new BookReduceInfo(bookOptional.get().getIsbn(),
-                bookOptional.get().getTitle(),
-                bookOptional.get().getGenre());
-
-        return bookReduceInfo;
-    }
-
-
 
 
 
