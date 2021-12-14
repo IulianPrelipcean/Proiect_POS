@@ -6,10 +6,15 @@ import com.example.bookorder.Model.Order;
 import com.example.bookorder.Model.OrderStatus;
 import com.example.bookorder.Service.OrderService;
 import lombok.AllArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -37,6 +42,32 @@ public class OrderController {
     // return all the orders from a client
     @GetMapping(value="/orders/{clientId}")
     public List<Order> getOrdersByClientId(@PathVariable(name="clientId") String clientId){
+
+        // TODO -- de mutat in addOrder
+        RestTemplate restTemplate = new RestTemplate();
+        String endpointPath = "http://localhost:8080/api/bookcollection/bookQuantity";
+//        String endpointPath = "http://localhost:8081/api/bookorders/order/1";
+
+        // preiau string-ul cu format json
+        String resultBookQuantity = restTemplate.getForObject(endpointPath, String.class);
+        //System.out.println("\n\n---- result string is :  " + resultBookQuantity);
+
+        // trec string ul in json
+        JSONObject object = new JSONObject(resultBookQuantity);
+        //Integer obj = object.getInt("ISBN-7");
+
+        // preiau toate cheile
+        Set<String> keys = object.keySet();
+        System.out.println("\n\n---- result set keys:  " + keys);
+
+        //System.out.println("\n\n---- result json:  " + obj);
+
+        return orderService.getOrdersByClientId(clientId);
+    }
+
+    @GetMapping(value="/order/{clientId}")
+    public List<Order> getOrdersByClient(@PathVariable(name="clientId") String clientId){
+
         return orderService.getOrdersByClientId(clientId);
     }
 
@@ -45,6 +76,10 @@ public class OrderController {
     @PostMapping(value="/addOrder/{clientId}")
     public void addOrder(@RequestBody Order order,
                          @PathVariable(name="clientId") String clientId){
+
+
+
+
         orderService.addOrder(order, clientId);
     }
 

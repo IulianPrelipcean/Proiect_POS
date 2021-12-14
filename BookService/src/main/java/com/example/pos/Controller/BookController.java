@@ -8,6 +8,8 @@ import com.example.pos.Model.Entities.BookReduceInfo.BookReduceInfo;
 import com.example.pos.Service.AuthorService;
 import com.example.pos.Service.BookAuthorService;
 import com.example.pos.Service.BookService;
+import org.json.JSONObject;
+import org.springframework.boot.json.YamlJsonParser;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -31,6 +34,24 @@ public class BookController {
         this.bookService = bookService;
         this.authorService = authorService;
         this.bookAuthorService = bookAuthorService;
+    }
+
+
+    //return a list of tuples that contain the Isbn and the quantity of a book
+    @GetMapping(value="/bookQuantity")
+    public String getBooksQuantity(){
+        System.out.println("before ------- ");
+        //List<Map<String, Integer>> quantityList = bookService.getBooksQuantity();
+        JSONObject jsonObjectBooks  = bookService.getBooksQuantity();
+
+        String jsonString = jsonObjectBooks.toString();
+
+        System.out.println("after entity is ------- " + jsonObjectBooks);
+
+        System.out.println("after string is ------- " + jsonString);
+
+
+        return jsonString;
     }
 
 

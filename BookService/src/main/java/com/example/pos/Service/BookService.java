@@ -10,12 +10,15 @@ import com.example.pos.Model.Mappers.BookMapper;
 import com.example.pos.Model.Mappers.BookReduceInfoMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Data
@@ -33,11 +36,27 @@ public class BookService {
 
 
 
+    public JSONObject getBooksQuantity(){
+        Optional<List<Book>> bookOption = Optional.of(bookRepository.findAll());
+        if(bookOption.isPresent()){
+            List<Book> booksList = bookOption.get();
+            JSONObject jsonObjectBooks = new JSONObject();
+            for(Book book: booksList){
+                jsonObjectBooks.put(book.getIsbn(), book.getAvailable_stock());
+            }
+            return jsonObjectBooks;
+        }
+        else{
+            throw new IllegalStateException("There is no book available!");
+        }
+    }
+
+
 
     public List<BookDTO> getBooks(){
         Optional<List<Book>> booksOption = Optional.of(bookRepository.findAll());
         if(!booksOption.isPresent()){
-            throw new IllegalStateException("There is no book !");
+            throw new IllegalStateException("There is no book available!");
         }
         else{
             List<Book> bookList = booksOption.get();
