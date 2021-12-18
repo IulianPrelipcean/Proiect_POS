@@ -1,6 +1,7 @@
 package com.example.bookorder.Controller;
 
 
+import com.example.bookorder.Model.Book;
 import com.example.bookorder.Model.Order;
 
 import com.example.bookorder.Model.OrderStatus;
@@ -25,6 +26,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class OrderController {
 
     private final OrderService orderService;
+    //private final RestTemplate restTemplate;
 
 
 //    public OrderController(OrderService orderService) {
@@ -42,26 +44,6 @@ public class OrderController {
     // return all the orders from a client
     @GetMapping(value="/orders/{clientId}")
     public List<Order> getOrdersByClientId(@PathVariable(name="clientId") String clientId){
-
-        // TODO -- de mutat in addOrder
-        RestTemplate restTemplate = new RestTemplate();
-        String endpointPath = "http://localhost:8080/api/bookcollection/bookQuantity";
-//        String endpointPath = "http://localhost:8081/api/bookorders/order/1";
-
-        // preiau string-ul cu format json
-        String resultBookQuantity = restTemplate.getForObject(endpointPath, String.class);
-        //System.out.println("\n\n---- result string is :  " + resultBookQuantity);
-
-        // trec string ul in json
-        JSONObject object = new JSONObject(resultBookQuantity);
-        //Integer obj = object.getInt("ISBN-7");
-
-        // preiau toate cheile
-        Set<String> keys = object.keySet();
-        System.out.println("\n\n---- result set keys:  " + keys);
-
-        //System.out.println("\n\n---- result json:  " + obj);
-
         return orderService.getOrdersByClientId(clientId);
     }
 
@@ -78,9 +60,42 @@ public class OrderController {
                          @PathVariable(name="clientId") String clientId){
 
 
+        //RestTemplate restTemplate = new RestTemplate();
+        String endpointPath = "http://localhost:8080/api/bookcollection/bookStock";
+//        String endpointPath = "http://localhost:8081/api/bookorders/order/1";
+
+        // preiau string-ul in format json apeland endpoint-ul din BookService
+        //String resultBookQuantity = restTemplate.getForObject(endpointPath, String.class);
+        //System.out.println("\n\n---- result string is :  " + resultBookQuantity);
+
+        String resultBookQuantity = "sd";
 
 
-        orderService.addOrder(order, clientId);
+        orderService.addOrder(order, clientId, resultBookQuantity);
+    }
+
+
+    // add a book to an order(if exist ? append: create)
+    @PostMapping(value="/addBook/{clientId}")
+    public String addBookByClientId(@RequestBody Book book,
+                                  @PathVariable(name="clientId") String clientId){
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        // impachetez id-ul cartii si cantitatea intr-un json
+        JSONObject bookJSONObject =  new JSONObject();
+        bookJSONObject.put(book.getIsbn(), book.getQuantity());
+
+        String endpointPath = "http://localhost:8080/api/bookcollection/bookCheckStock";
+
+        // the request on endpoint return a JSON which is in a String format
+        String resultBookQuantity = restTemplate.postForObject(endpointPath, bookJSONObject.toString(), String.class);
+
+        System.out.println("resultBookQuality: " + resultBookQuantity);
+
+        bookJSONObject = orderService.addBookByClientId(book, clientId, resultBookQuantity);
+
+        return bookJSONObject.toString();
     }
 
 

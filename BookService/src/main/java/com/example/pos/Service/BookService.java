@@ -16,10 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Data
 @Service
@@ -36,7 +33,7 @@ public class BookService {
 
 
 
-    public JSONObject getBooksQuantity(){
+    public JSONObject getBooksStock(){
         Optional<List<Book>> bookOption = Optional.of(bookRepository.findAll());
         if(bookOption.isPresent()){
             List<Book> booksList = bookOption.get();
@@ -156,6 +153,28 @@ public class BookService {
             throw new IllegalStateException("Title is not unique!");
         }
         return BookMapper.bookToBookDTO(bookRepository.save(book));
+    }
+
+
+
+    public String checkBookStock(JSONObject bookJSONObject){
+        Set<String> bookKeys = bookJSONObject.keySet();
+        String bookIsbn = "";
+        for(String key: bookKeys){
+            bookIsbn = key;
+        }
+
+        Optional<Book> bookOptional = bookRepository.findById(bookIsbn);
+        Book book = bookOptional.get();
+        if(bookOptional.isPresent()){
+            if(book.getAvailable_stock() > bookJSONObject.getInt(bookIsbn)){
+                bookJSONObject.put(bookIsbn, -1);       // stock is available, so we will return an invalid result
+            }
+            else{
+                bookJSONObject.put(bookIsbn, book.getAvailable_stock());      // there is not enough books, so we will return the available stock
+            }
+        }
+        return bookJSONObject.toString();
     }
 
 

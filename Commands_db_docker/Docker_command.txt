@@ -27,12 +27,12 @@ docker start <id>
  
  
  
-docker pull mongo:4.4                   // creeaza local o imagine, existenta deja undeva intr-un repo
+docker pull mongo:4.4                   // creeaza local o imagine, existenta deja undeva intr-un repo online
 docker run -d -p 27017:27017 -v ~/mongodb4:/data/db --name mongo_db mongo:4.4       // creeaza un container pe baza imaginii instalate mai sus
 
 docker exec -it mongodb bash        // ruleaza container-ul ce are numele "mongodb"
 mongo
-
+// sau mongosh
  
  
  

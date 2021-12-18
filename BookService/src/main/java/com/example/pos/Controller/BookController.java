@@ -37,22 +37,25 @@ public class BookController {
     }
 
 
-    //return a list of tuples that contain the Isbn and the quantity of a book
-    @GetMapping(value="/bookQuantity")
-    public String getBooksQuantity(){
-        System.out.println("before ------- ");
-        //List<Map<String, Integer>> quantityList = bookService.getBooksQuantity();
-        JSONObject jsonObjectBooks  = bookService.getBooksQuantity();
+
+    // TODO -- deocamdata e nefolosita(probabil va fi stearsa)
+    //return a JSON as a string that contain the Isbn and the quantity of a book
+    @GetMapping(value="/bookStock")
+    public String getBooksStock(){
+        // System.out.println("before ------- ");
+        // List<Map<String, Integer>> quantityList = bookService.getBooksQuantity();
+        JSONObject jsonObjectBooks  = bookService.getBooksStock();
 
         String jsonString = jsonObjectBooks.toString();
 
-        System.out.println("after entity is ------- " + jsonObjectBooks);
+        //System.out.println("after entity is ------- " + jsonObjectBooks);
 
-        System.out.println("after string is ------- " + jsonString);
+        //System.out.println("after string is ------- " + jsonString);
 
 
         return jsonString;
     }
+
 
 
 
@@ -194,5 +197,18 @@ public class BookController {
 
         return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
     }
+
+
+    // verify the stock for a given book, return the available stock for the book
+    @PostMapping(value="/bookCheckStock")
+    public String verifyOneBookStock(@RequestBody String bookString){
+        JSONObject bookJSONObject = new JSONObject(bookString);
+        System.out.println("before");
+        String availableStock = bookService.checkBookStock(bookJSONObject);
+        System.out.println("after");
+        return availableStock;
+    }
+
+
 
 }
