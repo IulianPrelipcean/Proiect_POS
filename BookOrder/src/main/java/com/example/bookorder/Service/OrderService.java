@@ -28,6 +28,8 @@ public class OrderService {
 //    }
 
 
+    // ---------------------------------------------  GET  ----------------------------------------
+
     public List<Order> getOrders() {
         List<Order> orderList = orderRepository.findAll();
         return orderList;
@@ -52,10 +54,11 @@ public class OrderService {
     }
 
 
-    /* TODO  ------------------ de verificat stocul disponibil pt fiecare carte
-    comanda -> preia_id_client -> pentru fiecare isbn de carte verific daca e suficient stoc ->(daca DA) -> creez sau adaug un document in colectie
-     */
-    public void addOrder(Order order, String clientId, String resultBookQuantity) {
+
+    // ---------------------------------------------  POST  ----------------------------------------
+
+    //  TODO  ---- ( de stabilit daca mai e nevoie de functie sau trebuie stearsa)
+    public void addOrder(Order order, String clientId) {
 
         // set the name for the collection and check its existence
         orderRepository.setCollectionName(clientId);
@@ -141,13 +144,65 @@ public class OrderService {
         }
         // return the available stock for the book
         return bookJSON;
+    }
 
+
+    public JSONObject getOrderInPendingByClientId(String clientId){
+        // set the name for the collection and check its existence
+        orderRepository.setCollectionName(clientId);
+
+        if (mongoTemplate.collectionExists(orderRepository.getCollectionName())) {
+            JSONObject bookJSONList = new JSONObject();
+            List<Order> bookOrderList = orderRepository.findAll();
+            for(Order order: bookOrderList){
+                if(order.getOrderStatus() == OrderStatus.PENDING){
+                    for(Book book: order.getBookList()){
+                        bookJSONList.put(book.getIsbn(), book.getQuantity());
+                    }
+                }
+            }
+            return bookJSONList;
+        }
+        else{
+            throw new IllegalStateException("The collection doesn't exists!");
+        }
+    }
+
+
+    public void changeOrderStatusToFinished(String clientId){
+        // set the name for the collection and check its existence
+        orderRepository.setCollectionName(clientId);
+
+        if (mongoTemplate.collectionExists(orderRepository.getCollectionName())) {
+            List<Order> bookOrderList = orderRepository.findAll();
+            if(!bookOrderList.isEmpty()) {
+                String orderId = bookOrderList.get(0).getId();
+                for (Order order : bookOrderList) {
+                    if (order.getOrderStatus() == OrderStatus.PENDING) {
+                        orderId = order.getId();
+                        order.setOrderStatus(OrderStatus.FINISHED);
+                    }
+                }
+                Optional<Order> orderOptional = orderRepository.findById(orderId);
+                if(orderOptional.isPresent()){
+                    Order orderInPending = orderOptional.get();
+                    orderInPending.setOrderStatus(OrderStatus.FINISHED);
+                    orderRepository.save(orderInPending);
+                }
+                else{
+                    throw new IllegalStateException("The order was not found for changing status to FINISHED!");
+                }
+            }
+        }
+        else{
+            throw new IllegalStateException("The collection doesn't exists!");
+        }
     }
 
 
 
 
-
+    // ---------------------------------------------  PUT  ----------------------------------------
 
     public void changeOrderStatus(String clientId, String orderId, OrderStatus orderStatus){
         orderRepository.setCollectionName(clientId);
@@ -169,6 +224,8 @@ public class OrderService {
         }
     }
 
+
+    // ---------------------------------------------  DELETE  ----------------------------------------
 
     public void deleteOrdersByClientId(String clientId){
         orderRepository.setCollectionName(clientId);

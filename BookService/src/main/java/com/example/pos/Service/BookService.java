@@ -14,6 +14,8 @@ import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -177,6 +179,49 @@ public class BookService {
         return bookJSONObject.toString();
     }
 
+
+    public ResponseEntity<?> checkBookStockAll(JSONObject bookJSONObjects){
+        Set<String> bookKeys = bookJSONObjects.keySet();
+
+        List<Book> bookList = bookRepository.findAll();
+        List<Book> bookListForUpdate = new ArrayList<Book>();
+
+        JSONObject bookJSONResponse = new JSONObject();
+
+        boolean status = true;
+
+        if(!bookList.isEmpty()){
+            for(String isbn: bookKeys){
+                for(Book book: bookList){
+                    if(isbn.equals(book.getIsbn())){
+                        if(book.getAvailable_stock() >= bookJSONObjects.getInt(isbn)){
+                            bookJSONResponse.put(isbn, -1);
+                            book.setAvailable_stock(book.getAvailable_stock() - bookJSONObjects.getInt(isbn));      // delete from the database the quantity purchased
+                            bookListForUpdate.add(book);        // save just the books that we will update (in this way we will avoid updating all the books from the DB)
+                        }
+                        else{
+                            bookJSONResponse.put(isbn, book.getAvailable_stock());
+                            status = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        if(status){     // if the status is true, the update is made for the whole order, otherwise it does not update anything
+            for(Book book: bookListForUpdate) {
+                bookRepository.save(book);
+            }
+            return new ResponseEntity<>(
+                    bookJSONResponse.toString(), HttpStatus.OK
+            );
+        }
+        else{
+            return new ResponseEntity<>(
+                    bookJSONResponse.toString(), HttpStatus.BAD_REQUEST
+            );
+        }
+    }
 
 
 }

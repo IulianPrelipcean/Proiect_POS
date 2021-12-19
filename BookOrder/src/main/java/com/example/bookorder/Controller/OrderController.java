@@ -6,10 +6,15 @@ import com.example.bookorder.Model.Order;
 
 import com.example.bookorder.Model.OrderStatus;
 import com.example.bookorder.Service.OrderService;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.json.JSONObject;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -34,6 +39,8 @@ public class OrderController {
 //    }
 
 
+    // ---------------------------------------------  GET  ----------------------------------------
+
     // unused (to be deleted)
     @GetMapping(value="/orders")
     public List<Order> getOrders(){
@@ -54,24 +61,14 @@ public class OrderController {
     }
 
 
+
+    // ---------------------------------------------  POST  ----------------------------------------
+
     // add an order based on a client id
     @PostMapping(value="/addOrder/{clientId}")
     public void addOrder(@RequestBody Order order,
                          @PathVariable(name="clientId") String clientId){
-
-
-        //RestTemplate restTemplate = new RestTemplate();
-        String endpointPath = "http://localhost:8080/api/bookcollection/bookStock";
-//        String endpointPath = "http://localhost:8081/api/bookorders/order/1";
-
-        // preiau string-ul in format json apeland endpoint-ul din BookService
-        //String resultBookQuantity = restTemplate.getForObject(endpointPath, String.class);
-        //System.out.println("\n\n---- result string is :  " + resultBookQuantity);
-
-        String resultBookQuantity = "sd";
-
-
-        orderService.addOrder(order, clientId, resultBookQuantity);
+        orderService.addOrder(order, clientId);
     }
 
 
@@ -91,12 +88,38 @@ public class OrderController {
         // the request on endpoint return a JSON which is in a String format
         String resultBookQuantity = restTemplate.postForObject(endpointPath, bookJSONObject.toString(), String.class);
 
-        System.out.println("resultBookQuality: " + resultBookQuantity);
-
         bookJSONObject = orderService.addBookByClientId(book, clientId, resultBookQuantity);
 
         return bookJSONObject.toString();
     }
+
+
+    // communicate with the bookService and FINISH the order if stock is available, or return the available stock if not
+    @PostMapping(value="/finishOrder/{clientId}")
+    public ResponseEntity<String> finishOrderByClientId(@PathVariable(name="clientId") String clientId){
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> responseEntity = null;
+        String endpointPath = "http://localhost:8080/api/bookcollection/checkFinishOrder";
+
+        // return the last order open, which has the status on PENDING
+        JSONObject bookJSONList = orderService.getOrderInPendingByClientId(clientId);
+
+        try {
+            responseEntity = restTemplate.postForEntity(endpointPath, bookJSONList.toString(), String.class);
+
+            // if there is available stock for every book, the status of the order is set on FINISHED
+            if(responseEntity.getStatusCode() == HttpStatus.OK){
+                orderService.changeOrderStatusToFinished(clientId);
+            }
+            return responseEntity;
+        }
+        catch(HttpClientErrorException e){      // return the available stock, in order to be requested again with the correct value
+            return new ResponseEntity<String>(
+                    e.getResponseBodyAsString(), HttpStatus.BAD_REQUEST
+            );
+        }
+    }
+
 
 
     // change the order status based on clienId and orderId
@@ -107,6 +130,9 @@ public class OrderController {
         orderService.changeOrderStatus(clientId, orderId, orderStatus);
     }
 
+
+
+    // ---------------------------------------------  DELETE  ----------------------------------------
 
     // delete all the orders for a client
     @DeleteMapping(value="/deleteOrdersByClientId/{clientId}")

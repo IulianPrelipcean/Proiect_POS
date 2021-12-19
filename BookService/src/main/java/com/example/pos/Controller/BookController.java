@@ -13,6 +13,7 @@ import org.springframework.boot.json.YamlJsonParser;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -203,10 +204,16 @@ public class BookController {
     @PostMapping(value="/bookCheckStock")
     public String verifyOneBookStock(@RequestBody String bookString){
         JSONObject bookJSONObject = new JSONObject(bookString);
-        System.out.println("before");
         String availableStock = bookService.checkBookStock(bookJSONObject);
-        System.out.println("after");
         return availableStock;
+    }
+
+
+    // verify the available stock for the last time, and update the stock in database if the stock is available, or return the available quantity if not
+    @PostMapping(value="/checkFinishOrder")
+    public ResponseEntity<?> checkFinishOrder(@RequestBody String bookJSONList){
+        JSONObject bookJSONObjects = new JSONObject(bookJSONList);
+        return bookService.checkBookStockAll(bookJSONObjects);
     }
 
 
