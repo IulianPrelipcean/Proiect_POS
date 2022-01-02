@@ -1,12 +1,27 @@
 package pos.examples.soap.stateless.endpoints;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+import pos.examples.soap.stateless.JWTConfig.JwtTokenUtil;
 import pos.examples.soap.stateless.Model.UserRepository;
+import pos.examples.soap.stateless.Service.JwtUserDetailsService;
 import pos.examples.soap.stateless.Service.UserService;
 import stateless.soap.examples.pos.users.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+
+
 
 import java.math.BigInteger;
 import java.util.List;
@@ -17,9 +32,100 @@ public class UserEndpoint {
     private static final String NAMESPACE_URI = "http://pos.examples.soap.stateless/Users";
     private final UserService userService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private JwtUserDetailsService userDetailsService;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+
+
     public UserEndpoint(UserService userService)
     {
         this.userService = userService;
+    }
+
+
+    // check and generate a token
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("permitAll()")
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart="authenticationRequest")
+    @ResponsePayload
+    public AuthenticationResponse createAuthenticationToken(@RequestPayload AuthenticationRequest authenticationRequest){
+
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+
+        String encodedPassword = bCryptPasswordEncoder.encode("password");
+        System.out.println("password: " + encodedPassword);
+
+        System.out.println("\n\n========= begin --- in create token function==========\n\n");
+
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUser());
+            if (userDetails != null && userDetails.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                System.out.println("\n\n========= in create token -- user verification ADMIN ==========\n\n");
+            }
+            else{
+                System.out.println("\n\n========= in create token -- user verification  NOT ADMIN ==========\n\n");
+            }
+
+            String token = jwtTokenUtil.generateToken(userDetails);
+            authenticationResponse.setStatus("OK");
+            authenticationResponse.setToken(token);
+
+        }catch(UsernameNotFoundException e){
+            System.out.println("\n\n========= in catch token -- invalid user ==========\n\n");
+            authenticationResponse.setStatus("FORBIDDEN");
+            authenticationResponse.setToken("");
+        }
+
+
+
+        System.out.println("\n\n========= in create token function ==========\n\n");
+
+
+
+        try{
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUser(), authenticationRequest.getPassword()));
+        }catch (DisabledException e) {
+            throw new IllegalStateException("user disabled");
+        } catch (BadCredentialsException e) {
+            throw new IllegalStateException("invalid credentials");
+        }
+
+//        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUser());
+//        final String token = jwtTokenUtil.generateToken(userDetails);
+//
+//        System.out.println("\n\n----token: " + token);
+//
+//        authenticationResponse.setToken(token);
+
+        return authenticationResponse;
+    }
+
+
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart="tokenVerificationRequest")
+    @ResponsePayload
+    public TokenVerificationResponse createAuthenticationToken(@RequestPayload TokenVerificationRequest tokenVerificationRequest){
+        TokenVerificationResponse tokenVerificationResponse = new TokenVerificationResponse();
+
+
+
+
+        tokenVerificationResponse.setResponse("token valid");
+
+
+        System.out.println("\n\n========= verify token function==========\n\n");
+
+
+        return tokenVerificationResponse;
     }
 
 
