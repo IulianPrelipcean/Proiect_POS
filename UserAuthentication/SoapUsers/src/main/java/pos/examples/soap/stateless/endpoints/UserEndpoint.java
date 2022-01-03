@@ -7,6 +7,8 @@ import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+import pos.examples.soap.stateless.Exception.TokenException;
+import pos.examples.soap.stateless.JWTConfig.JwtRequestFilter;
 import pos.examples.soap.stateless.JWTConfig.JwtTokenUtil;
 import pos.examples.soap.stateless.Model.UserRepository;
 import pos.examples.soap.stateless.Service.JwtUserDetailsService;
@@ -37,6 +39,9 @@ public class UserEndpoint {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
 
     @Autowired
     private JwtUserDetailsService userDetailsService;
@@ -86,12 +91,6 @@ public class UserEndpoint {
             authenticationResponse.setToken("");
         }
 
-
-
-        System.out.println("\n\n========= in create token function ==========\n\n");
-
-
-
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUser(), authenticationRequest.getPassword()));
         }catch (DisabledException e) {
@@ -100,29 +99,20 @@ public class UserEndpoint {
             throw new IllegalStateException("invalid credentials");
         }
 
-//        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUser());
-//        final String token = jwtTokenUtil.generateToken(userDetails);
-//
-//        System.out.println("\n\n----token: " + token);
-//
-//        authenticationResponse.setToken(token);
-
         return authenticationResponse;
     }
 
 
     @PayloadRoot(namespace = NAMESPACE_URI, localPart="tokenVerificationRequest")
     @ResponsePayload
-    public TokenVerificationResponse createAuthenticationToken(@RequestPayload TokenVerificationRequest tokenVerificationRequest){
+    public TokenVerificationResponse verifyToken(@RequestPayload TokenVerificationRequest tokenVerificationRequest){
         TokenVerificationResponse tokenVerificationResponse = new TokenVerificationResponse();
-
-
 
 
         tokenVerificationResponse.setResponse("token valid");
 
 
-        System.out.println("\n\n========= verify token function==========\n\n");
+        System.out.println("\n========= verify token function==========\n");
 
 
         return tokenVerificationResponse;

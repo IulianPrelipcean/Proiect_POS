@@ -24,18 +24,19 @@ import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition;
 import org.springframework.xml.xsd.SimpleXsdSchema;
 import org.springframework.xml.xsd.XsdSchema;
+import pos.examples.soap.stateless.Exception.TokenException;
+import pos.examples.soap.stateless.JWTConfig.JwtAuthenticationEntryPoint;
 import pos.examples.soap.stateless.JWTConfig.JwtRequestFilter;
 
 @EnableWs
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-//public class WebServiceConfig extends WsConfigurerAdapter {
 public class WebServiceConfig extends WebSecurityConfigurerAdapter {
 
 
-//    @Autowired
-//    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Autowired
     private UserDetailsService jwtUserDetailsService;
@@ -122,11 +123,14 @@ public class WebServiceConfig extends WebSecurityConfigurerAdapter {
                 // dont authenticate this particular request
                 .authorizeRequests().antMatchers("/authenticate").permitAll().
                 // all other requests need to be authenticated
-                        anyRequest().authenticated();
-                // make sure we use stateless session; session won't be used to
-                // store user's state.
-//                        exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                        anyRequest().authenticated().and().
+                 //make sure we use stateless session; session won't be used to
+                 //store user's state.
+                        exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+//        TokenException tokenException = jwtRequestFilter.getTokenException();
+//        System.out.println("token config run: " + tokenException.getTokenExpire());
 
         // Add a filter to validate the tokens with every request
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

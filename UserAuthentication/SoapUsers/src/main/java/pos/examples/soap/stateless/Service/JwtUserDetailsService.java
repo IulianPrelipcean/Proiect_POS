@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 public class JwtUserDetailsService implements UserDetailsService{
 
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -29,7 +28,6 @@ public class JwtUserDetailsService implements UserDetailsService{
             List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));          // rol pe care il luam din baza de date
 
-            //String encodedPassword = bCryptPasswordEncoder.encode("password");
             //String encodedPassword = "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6";
             String encodedPassword = "$2a$10$5QVMFQqNR9pbRJh2Pknm2.N6xUvmY1KgCIYWLovzIKk94dMm4GV6e";
 

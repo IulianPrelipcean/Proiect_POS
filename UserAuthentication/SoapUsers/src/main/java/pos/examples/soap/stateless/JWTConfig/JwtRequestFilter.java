@@ -8,18 +8,21 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import pos.examples.soap.stateless.Exception.TokenException;
 import pos.examples.soap.stateless.Service.JwtUserDetailsService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 
-
+@Getter
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
@@ -28,6 +31,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -45,10 +49,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
+                //response.sendError(401);
             } catch (ExpiredJwtException e) {
+                //tokenException.setTokenExpire(true);
                 System.out.println("JWT Token has expired");
+                //response.sendError(401);
             }
         } else {
+            //response.sendError(401);
             logger.warn("JWT Token does not begin with Bearer String");
         }
 
@@ -72,9 +80,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
         else{
-            System.out.println("missing token: we should arrive here");
+            System.out.println("invalid/missing token: we should arrive here");
         }
-        //System.out.println("request: " + request.getAttributeNames().toString());
         chain.doFilter(request, response);
     }
 
