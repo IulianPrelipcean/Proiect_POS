@@ -1,0 +1,41 @@
+
+/* .nav_bar{
+    background: aquamarine;
+    width: 60%;
+    margin: 20px auto;
+    padding: 10px;
+    border: 3px dashed var(--borderC);
+    border-radius: 20px;
+}
+
+.buttons_menu{
+    display: inline-block;
+} */
+
+
+.menuBar {
+    overflow: hidden;
+    background-color: rgb(240, 233, 233);
+    /* position: fixed;
+    width: 100%; */
+}
+
+.menuBar a {
+    float: left;
+    display: block;
+    color: #199c8b;
+    background-color: rgb(34, 46, 42);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 24px;
+}
+
+
+
+
+.menuBar a:hover {
+    /* background-color: rgba(160, 125, 125, 0.2); */
+    background-color: rgba(192, 22, 235, 0.308);
+    color: rgb(0, 0, 0);
+}

@@ -81,7 +81,7 @@ public class OrderController {
 
         // impachetez id-ul cartii si cantitatea intr-un json
         JSONObject bookJSONObject =  new JSONObject();
-        bookJSONObject.put(book.getIsbn(), book.getQuantity());
+        bookJSONObject.put(book.getIsbn(), book.getQuantity());     // create a json object like { "ISBN-1":"2"}
 
         String endpointPath = "http://localhost:8080/api/bookcollection/bookCheckStock";
 

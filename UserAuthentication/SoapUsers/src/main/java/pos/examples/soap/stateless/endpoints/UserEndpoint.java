@@ -109,7 +109,7 @@ public class UserEndpoint {
         TokenVerificationResponse tokenVerificationResponse = new TokenVerificationResponse();
 
 
-        tokenVerificationResponse.setResponse("token valid");
+        tokenVerificationResponse.setStatus("token valid");
 
 
         System.out.println("\n========= verify token function==========\n");
@@ -158,9 +158,9 @@ public class UserEndpoint {
 
         GetUserResponse userResp = new GetUserResponse();
         userResp.setId(BigInteger.valueOf(1));
-        userResp.setFirstName("ceva");
-        userResp.setLastName("last");
-        userResp.setAge(BigInteger.valueOf(2));
+        userResp.setUsername("ceva");
+        userResp.setPassword("last");
+        userResp.setRole("ADMIN");
 
         return userResponse;
     }

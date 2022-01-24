@@ -6,9 +6,9 @@
     <xs:element name="addUserRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="first_name" type="xs:string"/>
-                <xs:element name="last_name" type="xs:string"/>
-                <xs:element name="age" type="xs:integer"/>
+                <xs:element name="username" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+                <xs:element name="role" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -32,9 +32,9 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="id" type="xs:integer"/>
-                <xs:element name="first_name" type="xs:string"/>
-                <xs:element name="last_name" type="xs:string"/>
-                <xs:element name="age" type="xs:integer"/>
+                <xs:element name="username" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+                <xs:element name="role" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -51,9 +51,9 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="id" type="xs:integer"/>
-                <xs:element name="first_name" type="xs:string"/>
-                <xs:element name="last_name" type="xs:string"/>
-                <xs:element name="age" type="xs:integer"/>
+                <xs:element name="username" type="xs:string"/>
+                <xs:element name="password" type="xs:string"/>
+                <xs:element name="role" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -121,7 +121,7 @@
     <xs:element name="tokenVerificationResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="response" type="xs:string"/>
+                <xs:element name="status" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

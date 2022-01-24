@@ -13,6 +13,7 @@ import org.springframework.boot.json.YamlJsonParser;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,8 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+//@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path="api/bookcollection")
 public class BookController {
@@ -76,14 +79,33 @@ public class BookController {
                 linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
     }
 
-
+//    EntityModel<BookDTO>
+//    ResponseEntity<BookDTO>
     // return the books based on ISBN
+//    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value="/books/{isbn}")
     public EntityModel<BookDTO> getBooksByIsbn(@PathVariable(name="isbn")String isbn)
     {
+
+//        HttpHeaders responseHeaders = new HttpHeaders();
+//        responseHeaders.set("Access-Control-Allow-Origin", "*");
+
+//        return ResponseEntity.ok()
+//                .headers(responseHeaders)
+//                .body(bookService.getBooksByIsbn(isbn));
+
+
+//        return ResponseEntity.ok()
+//                .body(bookService.getBooksByIsbn(isbn));
+
+
         return EntityModel.of(bookService.getBooksByIsbn(isbn),
-                linkTo(methodOn(BookController.class).getBooksByIsbn(isbn)).withSelfRel(),
-                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
+                linkTo(methodOn(BookController.class).getBooksByIsbn(isbn)).withSelfRel());
+
+
+//        return EntityModel.of(bookService.getBooksByIsbn(isbn),
+//                linkTo(methodOn(BookController.class).getBooksByIsbn(isbn)).withSelfRel(),
+//                linkTo(methodOn(BookController.class).getBooks()).withRel("bookcollection"));
     }
 
 
@@ -200,11 +222,15 @@ public class BookController {
     }
 
 
-    // verify the stock for a given book, return the available stock for the book
+    // verify the stock for a given book, return the available stock for the book if the request is grater than the stock,
+    // or -1, if the requested quantity is lower than the stock available
+    //@CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value="/bookCheckStock")
     public String verifyOneBookStock(@RequestBody String bookString){
         JSONObject bookJSONObject = new JSONObject(bookString);
+        //System.out.println("----request: " + bookString);
         String availableStock = bookService.checkBookStock(bookJSONObject);
+        //System.out.println("----response: " + availableStock);
         return availableStock;
     }
 

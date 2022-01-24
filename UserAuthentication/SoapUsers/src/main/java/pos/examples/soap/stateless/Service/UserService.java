@@ -24,7 +24,7 @@ public class UserService {
     }
 
     public void addUser(AddUserRequest userInput){
-        User user = new User(userInput.getFirstName(), userInput.getLastName(), userInput.getAge().intValue());
+        User user = new User(userInput.getUsername(), userInput.getPassword(), userInput.getRole());
         userRepository.save(user);
     }
 
@@ -37,9 +37,9 @@ public class UserService {
             GetUserByIdResponse userResponse = new GetUserByIdResponse();
 
             userResponse.setId(BigInteger.valueOf(userData.getId()));
-            userResponse.setFirstName(userData.getFirst_name());
-            userResponse.setLastName(userData.getLast_name());
-            userResponse.setAge(BigInteger.valueOf(userData.getAge()));
+            userResponse.setUsername(userData.getUsername());
+            userResponse.setPassword(userData.getPassword());
+            userResponse.setRole(userData.getRole());
 
             return userResponse;
         }
@@ -64,9 +64,10 @@ public class UserService {
             for(User u: userList){
                 GetUserResponse userResponse = new GetUserResponse();
                 userResponse.setId(BigInteger.valueOf(u.getId()));
-                userResponse.setFirstName(u.getFirst_name());
-                userResponse.setLastName(u.getLast_name());
-                userResponse.setAge(BigInteger.valueOf(u.getAge()));
+                userResponse.setUsername(u.getUsername());
+                userResponse.setPassword(u.getPassword());
+                userResponse.setRole(u.getRole());
+
 
                 getUserResponseList.add(userResponse);
             }
@@ -78,12 +79,12 @@ public class UserService {
     }
 
 
-    public void updateUser(Integer userId, String firstName){
+    public void updateUser(Integer userId, String username){
         Optional<User> userOptional = userRepository.findById(userId);
         if(userOptional.isPresent())
         {
             User userData = userOptional.get();
-            userData.setFirst_name(firstName);
+            userData.setPassword(username);
             userRepository.save(userData);
         }
         else
