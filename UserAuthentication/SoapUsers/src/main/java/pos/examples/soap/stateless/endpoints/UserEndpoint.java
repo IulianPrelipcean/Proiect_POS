@@ -94,9 +94,13 @@ public class UserEndpoint {
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUser(), authenticationRequest.getPassword()));
         }catch (DisabledException e) {
-            throw new IllegalStateException("user disabled");
+            //throw new IllegalStateException("user disabled");
+            authenticationResponse.setStatus("UNAUTHORIZED");
+            authenticationResponse.setToken("");
         } catch (BadCredentialsException e) {
-            throw new IllegalStateException("invalid credentials");
+            //throw new IllegalStateException("invalid credentials");
+            authenticationResponse.setStatus("UNAUTHORIZED");
+            authenticationResponse.setToken("");
         }
 
         return authenticationResponse;

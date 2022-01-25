@@ -224,7 +224,6 @@ public class BookController {
 
     // verify the stock for a given book, return the available stock for the book if the request is grater than the stock,
     // or -1, if the requested quantity is lower than the stock available
-    //@CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value="/bookCheckStock")
     public String verifyOneBookStock(@RequestBody String bookString){
         JSONObject bookJSONObject = new JSONObject(bookString);

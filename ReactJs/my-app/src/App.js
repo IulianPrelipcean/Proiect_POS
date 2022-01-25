@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route} from 'react-router-dom';
 
 import useToken from './components/token/useToken';
 import Login from './components/login/Login';
+import Logout from './components/login/Logout';
 import BookStore from './components/bookStore/BookStore'
 import ShoppingCart from './components/shoppingCart/ShoppingCart'
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Container } from 'react-bootstrap';
@@ -14,20 +15,6 @@ import NavBar from './components/bookStore/NavBar';
 export default function App(){
 
 
-  console.log("enter in app")
-  const { token, setToken} = useToken()
-
-  if(!token){
-    console.log("in setToken: " + token)
-    return <Login setToken={setToken} />
-  }
-
-
-  // else{
-  //   console.log("in esle: " + token)
-  //   return <BookStore />
-  // }
-
     return (
       <div>
         <div className="wrapper">
@@ -35,8 +22,9 @@ export default function App(){
             <Routes>
               <Route path="/" element={<BookStore/>}> </Route>
               <Route path="/login" element={<Login/>}> </Route>
+              <Route path="/logout" element={<Logout/>}> </Route>
               <Route path="/shoppingCart" element={<ShoppingCart/>}> </Route>
-
+              
             </Routes>
           </BrowserRouter>
 
