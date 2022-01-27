@@ -1,18 +1,5 @@
 
-/* .nav_bar{
-    background: aquamarine;
-    width: 60%;
-    margin: 20px auto;
-    padding: 10px;
-    border: 3px dashed var(--borderC);
-    border-radius: 20px;
-}
-
-.buttons_menu{
-    display: inline-block;
-} */
-
-
+/* ------------------------ NavBar ----------------------- */
 .menuBar {
     overflow: hidden;
     background-color: rgb(240, 233, 233);
@@ -31,11 +18,27 @@
     font-size: 24px;
 }
 
-
-
-
 .menuBar a:hover {
     /* background-color: rgba(160, 125, 125, 0.2); */
-    background-color: rgba(192, 22, 235, 0.308);
-    color: rgb(0, 0, 0);
+    background-color: rgba(76, 8, 94, 0.884);
+    color: rgb(219, 217, 217);
 }
+
+
+
+/* --------------------------  Book Content ----------------------- */
+.bookContent{
+    background:aliceblue;
+    padding:2px;
+    width:100%;
+}
+
+.bookTable{
+    text-align: center;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    border: 3px solid #ddd;
+    width: 100%;
+}
+
+

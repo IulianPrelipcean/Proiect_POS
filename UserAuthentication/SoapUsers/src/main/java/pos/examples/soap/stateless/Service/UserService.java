@@ -47,9 +47,22 @@ public class UserService {
         {
             throw new IllegalStateException("The user cannot be found!");
         }
-
-
     }
+
+    // return the data from a user by username
+    public User getUserByUsername(String username){
+        User user = userRepository.findByUsername(username);
+        if(user != null)
+        {
+            return user;
+        }
+        else
+        {
+            throw new IllegalStateException("The user cannot be found!");
+        }
+    }
+
+
 
 
     // ----- ******* NU MERGE ---------

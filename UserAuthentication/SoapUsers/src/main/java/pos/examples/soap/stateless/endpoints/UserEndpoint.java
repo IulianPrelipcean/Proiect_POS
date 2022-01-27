@@ -66,10 +66,9 @@ public class UserEndpoint {
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
 
-        String encodedPassword = bCryptPasswordEncoder.encode("password");
-        System.out.println("password: " + encodedPassword);
+//        String encodedPassword = bCryptPasswordEncoder.encode("password");
+//        System.out.println("password: " + encodedPassword);
 
-        System.out.println("\n\n========= begin --- in create token function==========\n\n");
 
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUser());
@@ -112,12 +111,8 @@ public class UserEndpoint {
     public TokenVerificationResponse verifyToken(@RequestPayload TokenVerificationRequest tokenVerificationRequest){
         TokenVerificationResponse tokenVerificationResponse = new TokenVerificationResponse();
 
-
         tokenVerificationResponse.setStatus("token valid");
-
-
-        System.out.println("\n========= verify token function==========\n");
-
+        //System.out.println("\n========= verify token function==========\n");
 
         return tokenVerificationResponse;
     }
@@ -129,6 +124,10 @@ public class UserEndpoint {
     @ResponsePayload
     public AddUserResponse addUser(@RequestPayload AddUserRequest userInput){
         AddUserResponse result = new AddUserResponse();
+
+        // encode the password before saving it into database
+        String encodedPassword = bCryptPasswordEncoder.encode(userInput.getPassword());
+        userInput.setPassword(encodedPassword);
 
         userService.addUser(userInput);
 

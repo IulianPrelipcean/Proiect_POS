@@ -17,27 +17,53 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtUserDetailsService implements UserDetailsService{
 
+    private final UserService userService;
+
+    public JwtUserDetailsService(UserService userService)
+    {
+        this.userService = userService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         // doar pe baza username-ului incarc si parola din baza de date ( parola care este criptata)
 
-        if ("javainuse".equals(username)) {
 
+//        userService.getUserByUsername(username);
+
+        pos.examples.soap.stateless.Model.User user = userService.getUserByUsername(username);
+
+
+
+        if(user != null){
             List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));          // rol pe care il luam din baza de date
-
-            //String encodedPassword = "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6";
-            String encodedPassword = "$2a$10$5QVMFQqNR9pbRJh2Pknm2.N6xUvmY1KgCIYWLovzIKk94dMm4GV6e";
+            authorities.add(new SimpleGrantedAuthority(user.getRole()));          // rol pe care il luam din baza de date
+            String encodedPassword = user.getPassword();
 
             return new User(username, encodedPassword, authorities);
-
-//            return new User("javainuse", "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
-//                    new ArrayList<>());
-        } else {
+        }
+        else {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
+
+
+//        if ("javainuse".equals(username)) {
+//
+//            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+//            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));          // rol pe care il luam din baza de date
+//
+//            //String encodedPassword = "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6";
+//            String encodedPassword = "$2a$10$5QVMFQqNR9pbRJh2Pknm2.N6xUvmY1KgCIYWLovzIKk94dMm4GV6e";
+//
+//            return new User(username, encodedPassword, authorities);
+//
+////            return new User("javainuse", "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6",
+////                    new ArrayList<>());
+//        } else {
+//            throw new UsernameNotFoundException("User not found with username: " + username);
+//        }
+
     }
 
 //    @Override

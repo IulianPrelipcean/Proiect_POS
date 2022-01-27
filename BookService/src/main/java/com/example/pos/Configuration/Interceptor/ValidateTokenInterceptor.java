@@ -33,44 +33,48 @@ public class ValidateTokenInterceptor implements HandlerInterceptor {
         System.out.println("first Request: " + request.getRequestURI());
         System.out.println("second Request: " + request.getRequestURL());
 
-        String token = request.getHeader("Authorization");
-
-        System.out.println("Token: " + token);
-
-
-
-        WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-
-        marshaller.setClassesToBeBound(TokenVerificationRequest.class, TokenVerificationResponse.class);
-        webServiceTemplate.setMarshaller(marshaller);
-        webServiceTemplate.setUnmarshaller(marshaller);
-
-        final TokenVerificationRequest tokenVerificationRequest = new TokenVerificationRequest();
-        tokenVerificationRequest.setToken(token.substring(7));
-
-
-        try {
-            TokenVerificationResponse tokenVerificationResponse = (TokenVerificationResponse) webServiceTemplate
-                    .marshalSendAndReceive("http://localhost:8082/sample", tokenVerificationRequest, new WebServiceMessageCallback() {
-                        @Override
-                        public void doWithMessage(WebServiceMessage message) throws IOException {
-                            TransportContext context = TransportContextHolder.getTransportContext();
-                            HeadersAwareSenderWebServiceConnection connection = (HeadersAwareSenderWebServiceConnection) context.getConnection();
-                            connection.addRequestHeader("Authorization", token);
-                        }
-                    });
-            System.out.println("response token: " + tokenVerificationResponse.getStatus());
-        } catch (WebServiceTransportException exception) {
-            throw new IllegalStateException("Unauthorized request");
+        if(request.getRequestURI().equals("/api/bookcollection/books")){
+            System.out.println("special resuest\n\n");
+            return true;
         }
+        else{
+            String token = request.getHeader("Authorization");
+
+            System.out.println("Token: " + token);
+
+
+
+            WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
+            Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+
+            marshaller.setClassesToBeBound(TokenVerificationRequest.class, TokenVerificationResponse.class);
+            webServiceTemplate.setMarshaller(marshaller);
+            webServiceTemplate.setUnmarshaller(marshaller);
+
+            final TokenVerificationRequest tokenVerificationRequest = new TokenVerificationRequest();
+            tokenVerificationRequest.setToken(token.substring(7));
+
+
+            try {
+                TokenVerificationResponse tokenVerificationResponse = (TokenVerificationResponse) webServiceTemplate
+                        .marshalSendAndReceive("http://localhost:8082/sample", tokenVerificationRequest, new WebServiceMessageCallback() {
+                            @Override
+                            public void doWithMessage(WebServiceMessage message) throws IOException {
+                                TransportContext context = TransportContextHolder.getTransportContext();
+                                HeadersAwareSenderWebServiceConnection connection = (HeadersAwareSenderWebServiceConnection) context.getConnection();
+                                connection.addRequestHeader("Authorization", token);
+                            }
+                        });
+                System.out.println("response token: " + tokenVerificationResponse.getStatus());
+            } catch (WebServiceTransportException exception) {
+                throw new IllegalStateException("Unauthorized request");
+            }
 
 
 //        http://localhost:8082/sample/users.wsdl
 
-
-
-        return true;
+            return true;
+        }
     }
 
 }

@@ -48,7 +48,7 @@ public class OrderController {
     }
 
 
-    // return all the orders from a client
+    // return all orders from a client
     @GetMapping(value="/orders/{clientId}")
     public List<Order> getOrdersByClientId(@PathVariable(name="clientId") String clientId){
         return orderService.getOrdersByClientId(clientId);
@@ -64,6 +64,7 @@ public class OrderController {
 
     // ---------------------------------------------  POST  ----------------------------------------
 
+    // unused
     // add an order based on a client id
     @PostMapping(value="/addOrder/{clientId}")
     public void addOrder(@RequestBody Order order,
@@ -134,7 +135,7 @@ public class OrderController {
 
     // ---------------------------------------------  DELETE  ----------------------------------------
 
-    // delete all the orders for a client
+    // delete all orders for a client
     @DeleteMapping(value="/deleteOrdersByClientId/{clientId}")
     public void deleteOrdersByClientId(@PathVariable(name="clientId") String clientId){
         orderService.deleteOrdersByClientId(clientId);

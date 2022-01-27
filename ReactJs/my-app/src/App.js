@@ -7,30 +7,32 @@ import Login from './components/login/Login';
 import Logout from './components/login/Logout';
 import BookStore from './components/bookStore/BookStore'
 import ShoppingCart from './components/shoppingCart/ShoppingCart'
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Container } from 'react-bootstrap';
-import { render } from '@testing-library/react';
-import NavBar from './components/bookStore/NavBar';
 
 
 export default function App(){
 
+  // const {token, setToken} = useToken();
 
-    return (
-      <div>
-        <div className="wrapper">
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<BookStore/>}> </Route>
-              <Route path="/login" element={<Login/>}> </Route>
-              <Route path="/logout" element={<Logout/>}> </Route>
-              <Route path="/shoppingCart" element={<ShoppingCart/>}> </Route>
-              
-            </Routes>
-          </BrowserRouter>
+  // if(token == null){
+  //   return <Login />
+  // }
 
-        </div>
+  return (
+    <div>
+      <div className="wrapper">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<BookStore/>}> </Route>
+            <Route path="/login" element={<Login/>}> </Route>
+            <Route path="/logout" element={<Logout/>}> </Route>
+            <Route path="/shoppingCart" element={<ShoppingCart/>}> </Route>
+            
+          </Routes>
+        </BrowserRouter>
+
       </div>
-    )
+    </div>
+  )
   
 
 }

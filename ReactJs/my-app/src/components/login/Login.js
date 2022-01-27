@@ -5,6 +5,7 @@ import NavBar from '../bookStore/NavBar';
 import useToken from "../token/useToken";
 import { ToastContainer, toast } from 'react-toastify';
 import BookStore from "../bookStore/BookStore";
+import { useNavigate } from "react-router-dom"; 
 
 
 
@@ -35,17 +36,6 @@ import BookStore from "../bookStore/BookStore";
 // }
 
 
-async function loginUser(credentials){
-    return fetch('http://localhost:8083/api/users/authenticate',{ 
-        method: 'POST',
-        headers: {
-            'Constent-Type': 'application/json'
-            // 'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify(credentials)
-    })
-        .then(data => data.json())
-}
 
 
 
@@ -75,22 +65,27 @@ async function loginUser(credentials){
 
 
 
+async function loginUser(credentials){
+    return fetch('http://localhost:8083/api/users/authenticate',{ 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+    })
+        .then(data => data.json())
+}
+
+
 export default function Login(){
     
     const { token, setToken} = useToken()
+    let navigate = useNavigate();
 
-    // if(!token){
-    // console.log("in setToken: " + token)
-    //     return <Login setToken={setToken} />
-    // }
-
-    //console.log("in Login")
+ 
     const [username, setUserName] = useState();
     const [password, SetPassword] = useState();
 
-    //console.log("after useState")
-
-    var loginFinised = false
 
 
     const handleSubmit = async e => {
@@ -99,37 +94,16 @@ export default function Login(){
             username,
             password
         });
-        if(authenticationResponse.status == "UNAUTHORIZED"){
+        if(authenticationResponse.status != "OK"){
             alert("Invalid credentials! ")
         }
         else{
             setToken(authenticationResponse.token);
-            console.log("hai")
-            loginFinised = true
-
-            
+            //alert("Login succesfully! \n Go to HOME page!")
+            navigate("/")
         }
-        // console.log("token:  " + authenticationResponse.token)
-        // console.log("status: " + authenticationResponse.status)
-        // //console.log("status: " + token["ISBN-10"])
-        // if(authenticationResponse.status)
-        // setToken(token);
     }
 
-
-
-    if(loginFinised == true){
-        console.log("manacamiai")
-        return (
-            <div>
-                <BookStore/>
-            </div>
-        )
-    }
-
-
-
-    
 
     return (
         <div>
@@ -152,6 +126,7 @@ export default function Login(){
             </div>
         </div>
     )
+
 }
 
 // Login.propTypes = {
